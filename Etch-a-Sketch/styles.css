@@ -1,0 +1,21 @@
+.column {
+  display: flex;
+}
+
+.box {
+  border: 1px solid black;
+  box-sizing: border-box;
+  margin: 1px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.hovered {
+  background-color: aqua;
+}
+
+.options {
+  display: flex;
+  width: 10%;
+  justify-content: space-between;
+}

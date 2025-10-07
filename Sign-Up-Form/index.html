@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./styles.css" rel="stylesheet" />
+    <title>Sign-Up-Form</title>
+  </head>
+  <body>
+    <script defer>
+      function validateForm(event) {
+        event.preventDefault();
+        const form = document.forms['signUp'];
+        if (form.password.value !== form.confirmPassword.value) {
+          alert("Passwords aren't the same");
+        } else {
+          alert('Success');
+        }
+      }
+    </script>
+    <div class="container">
+      <div class="image">
+        <img src="https://picsum.photos/700/1000" alt="" />
+        <div class="name">
+          <div class="logo">
+            <img src="./public/odin-lined.png" alt="Odin-lined" />
+          </div>
+          ODIN
+        </div>
+      </div>
+      <div class="content">
+        <div class="form">
+          <div class="text">
+            This is not a real online service! You know you need something like
+            this in your life to help you realize your deepest dreams. Sign up
+            now to get started.
+            <div class="motivation">You know you want to.</div>
+          </div>
+          <div class="spacer"></div>
+          <form name="signUp" onsubmit="return validateForm(event)" action="/#">
+            <legend>Let's do this</legend>
+            <div class="grid">
+              <div class="item">
+                <label for="firstName">FIRST NAME</label
+                ><input type="text" name="firstName" id="firstName" />
+              </div>
+              <div class="item">
+                <label for="lastName">LAST NAME</label>
+                <input type="text" name="lastName" id="lastName" />
+              </div>
+              <div class="item">
+                <label for="email">EMAIL*</label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="example@example.com"
+                  required
+                />
+              </div>
+              <div class="item">
+                <label for="phoneNumber">PHONE NUMBER</label>
+                <input type="tel" name="phoneNumber" id="phoneNumber" />
+              </div>
+              <div class="item">
+                <label for="password">PASSWORD*</label>
+                <input type="password" name="password" id="password" required />
+              </div>
+              <div class="item">
+                <label for="confirmPassword">CONFIRM PASSWORD*</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  id="confirmPassword"
+                  required
+                />
+              </div>
+              <div class="item">
+                <button type="submit">Create Account</button>
+                <div class="subtext">
+                  Already have an account?
+                  <div class="link">Log in</div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

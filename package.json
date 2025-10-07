@@ -8,7 +8,9 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --write .",
-    "format": "npm run lint:fix && npm run prettier"
+    "format": "npm run lint:fix && npm run prettier",
+    "tsc": "tsc --watch",
+    "sass": "sass --watch . --style=expanded --no-source-map"
   },
   "keywords": [],
   "author": "",
@@ -25,5 +27,8 @@
     "prettier-eslint": "^16.3.0",
     "prettier-eslint-cli": "^8.0.1",
     "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "sass": "^1.93.2"
   }
 }

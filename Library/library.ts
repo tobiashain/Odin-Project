@@ -5,6 +5,9 @@ class Book {
     public author: string,
     public pages: number,
     public read: boolean,
+    public shelf: number,
+    public color: string,
+    public width: number,
   ) {}
 
   public info() {
@@ -20,11 +23,11 @@ interface AddBookForm {
   author: string;
   pages: number;
   read: boolean;
+  shelf: number;
 }
 
-const library: Book[] = [];
+const libraryMap = new Map();
 
-const bookshelf = document.querySelector('#bookshelf');
 const form = document.querySelector('#addBookForm') as HTMLFormElement;
 const dialog = document.querySelector('dialog');
 document.querySelector('#newBook')?.addEventListener('click', () => {
@@ -32,51 +35,80 @@ document.querySelector('#newBook')?.addEventListener('click', () => {
 });
 
 document.querySelector('#addBookForm')!.addEventListener('submit', (event) => {
+  event.preventDefault();
   const data = new FormData(form);
   const formData: AddBookForm = {
     title: data.get('title') as string,
     author: data.get('author') as string,
     pages: Number(data.get('pages')),
     read: data.get('read') === 'on',
+    shelf: Number(data.get('shelf')),
   };
+
+  const bgColor = getRandomColor();
   const book = new Book(
     crypto.randomUUID(),
     formData.title,
     formData.author,
     formData.pages,
     formData.read,
+    formData.shelf,
+    bgColor,
+    Math.floor(Math.random() * 50 + 50),
   );
 
-  library.push(book);
+  libraryMap.set(book.id, book);
+  createBook(book, bgColor);
+
+  requestAnimationFrame(() => {
+    dialog?.close();
+  });
+});
+
+function createBook(book: Book, bgColor: string) {
+  const bookshelfRow = document.querySelector(`.shelf-${book.shelf}`);
+
   const bookDiv = document.createElement('div');
   bookDiv.className = 'book';
   bookDiv.id = crypto.randomUUID();
   bookDiv.innerHTML = `
-      <div class="informations">
-      <div class="title">${book.title}</div>
-      <div class="author">${book.author}</div>
-      <div class="pages">${book.pages} Pages</div>
-      <div class="read">${book.read}</div>
-      </div>
-      <div class="settings">
-        <input type="radio" name="isRead" value="true" class="isReadTrue">
-        <label for="isReadTrue">Read</label>
-        <input type="radio" name="isRead" value="false" class="isReadFalse">
-        <label for="isReadFalse">Unread </label>
-      </div>
+        <div class="title">${book.title}</div>
     `;
-  bookshelf?.append(bookDiv);
-  requestAnimationFrame(() => {
-    const tempBook = document.getElementById(`${bookDiv.id}`);
-    console.log(tempBook);
-    if (tempBook) {
-      if (book.read) {
-        tempBook.querySelector<HTMLInputElement>('.isReadTrue')!.checked = true;
-      } else {
-        tempBook.querySelector<HTMLInputElement>('.isReadFalse')!.checked =
-          true;
-      }
+  bookDiv.style.backgroundColor = book.color;
+  bookDiv.style.color = getReadableTextColor(bgColor);
+  bookDiv.style.width = book.width + 'px';
+  const height = Math.floor(Math.random() * 20 + 60);
+  bookDiv.style.height = height + '%';
+  //const translateZ = Math.floor(Math.random() * 100) - 50;
+  //bookDiv.dataset.zDepth = translateZ.toString();
+  //bookDiv.style.transform = `translateZ(${translateZ}px)`;
+
+  bookshelfRow?.append(bookDiv);
+}
+
+function getRandomColor() {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+function getReadableTextColor(bgColor: string) {
+  const r = parseInt(bgColor.substr(1, 2), 16);
+  const g = parseInt(bgColor.substr(3, 2), 16);
+  const b = parseInt(bgColor.substr(5, 2), 16);
+
+  const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+
+  let textColor = luminance > 0.5 ? '#000000' : '#FFFFFF';
+
+  if (Math.random() < 0.2) {
+    if (luminance < 0.7) {
+      textColor = 'gold';
     }
-    dialog?.close();
-  });
-});
+  }
+
+  return textColor;
+}

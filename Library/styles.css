@@ -1,1 +1,132 @@
+* {
+  margin: 0;
+}
 
+body {
+  height: 100svh;
+  overflow: hidden;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100svh;
+}
+
+.bookshelf {
+  height: 80svh;
+  aspect-ratio: 2/2.5;
+  background-color: #b15b1d;
+  border-radius: 20px;
+  padding: 20px;
+  position: relative;
+  perspective: 800px;
+  transform-style: preserve-3d;
+}
+
+.innerBookshelf {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  background-color: #86522d;
+  position: relative;
+  overflow-y: hidden;
+}
+.innerBookshelf::before {
+  content: "";
+  position: absolute;
+  box-sizing: border-box;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-left: 40px solid #8f5329;
+  border-right: 40px solid #8f5329;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.shelfs {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: space-evenly;
+}
+
+.shelf {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  position: relative;
+}
+.shelf::before {
+  content: "";
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background-color: #cc6821;
+}
+.shelf .left {
+  position: absolute;
+  left: 20px;
+  width: 70%;
+  height: 50px;
+  transform: skewX(-40deg);
+  background-color: #cf7a3c;
+}
+.shelf .right {
+  position: absolute;
+  right: 20px;
+  width: 70%;
+  height: 50px;
+  transform: skewX(40deg);
+  background-color: #cf7a3c;
+}
+
+.innerBookshelf > .shelf {
+  position: absolute;
+  bottom: 0;
+}
+.innerBookshelf > .shelf::before {
+  height: 0px;
+  bottom: 0;
+}
+
+.grid {
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template: 25% 27% 27% 20%/1fr;
+  padding: 0 10px;
+  box-sizing: border-box;
+  z-index: 1;
+}
+.grid .row {
+  display: flex;
+  height: 100%;
+  align-items: end;
+}
+
+.book {
+  height: 80%;
+  background-color: rgb(121, 121, 172);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+  box-sizing: border-box;
+  transform: translateZ(0);
+  position: relative;
+}
+.book .title {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}

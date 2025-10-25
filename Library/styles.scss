@@ -30,7 +30,7 @@ body {
   border-radius: 20px;
   background-color: #86522d;
   position: relative;
-  overflow-y: hidden;
+  overflow-x: hidden;
 
   &::before {
     content: '';
@@ -40,8 +40,8 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    border-left: 40px solid #8f5329;
-    border-right: 40px solid #8f5329;
+    border-left: 60px solid #8f5329;
+    border-right: 60px solid #8f5329;
     border-radius: inherit;
     pointer-events: none;
   }
@@ -76,7 +76,7 @@ body {
     left: 20px;
     width: 70%;
     height: 50px;
-    transform: skewX(-40deg);
+    transform: skewX(-60deg);
     background-color: #cf7a3c;
   }
   .right {
@@ -84,7 +84,7 @@ body {
     right: 20px;
     width: 70%;
     height: 50px;
-    transform: skewX(40deg);
+    transform: skewX(60deg);
     background-color: #cf7a3c;
   }
 }
@@ -112,8 +112,8 @@ body {
     display: flex;
     height: 100%;
     align-items: end;
-    //perspective: 800px;
-    //transform-style: preserve-3d;
+    perspective: 800px;
+    transform-style: preserve-3d;
   }
 }
 
@@ -129,9 +129,40 @@ body {
   box-sizing: border-box;
   transform: translateZ(0);
   position: relative;
+  transform-style: preserve-3d;
 
   .title {
     writing-mode: vertical-rl;
     text-orientation: mixed;
   }
+}
+
+.book div {
+  position: absolute;
+}
+
+/* Back cover – behind the spine */
+.book .left {
+  width: 200px;
+  height: 150px;
+  left: -100px;
+  transform: translateZ(-100px) rotateY(270deg);
+  background: rgb(100, 100, 160);
+}
+
+.book .right {
+  width: 200px;
+  height: 150px;
+  right: -100px;
+  transform: translateZ(-100px) rotateY(270deg);
+  background: rgb(100, 100, 160);
+}
+
+/* Top face – horizontal surface of pages */
+.book .top {
+  width: 40px;
+  height: 40px;
+  transform: rotateX(90deg) translateY(-75px);
+  transform-origin: top center;
+  background: rgb(180, 180, 230);
 }

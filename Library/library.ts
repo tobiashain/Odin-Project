@@ -73,15 +73,20 @@ function createBook(book: Book, bgColor: string) {
   bookDiv.id = crypto.randomUUID();
   bookDiv.innerHTML = `
         <div class="title">${book.title}</div>
+        <div class="spine"></div>
+        <div class="left"></div>
+        <div class="right"></div>
+        <div class="top"></div>
     `;
   bookDiv.style.backgroundColor = book.color;
   bookDiv.style.color = getReadableTextColor(bgColor);
   bookDiv.style.width = book.width + 'px';
   const height = Math.floor(Math.random() * 20 + 60);
-  bookDiv.style.height = height + '%';
-  //const translateZ = Math.floor(Math.random() * 100) - 50;
-  //bookDiv.dataset.zDepth = translateZ.toString();
-  //bookDiv.style.transform = `translateZ(${translateZ}px)`;
+  //bookDiv.style.height = height + '%';
+  bookDiv.style.height = '150px';
+  const translateZ = Math.floor(Math.random() * 100) - 50;
+  bookDiv.dataset.zDepth = translateZ.toString();
+  bookDiv.style.transform = `translateZ(${translateZ}px)`;
 
   bookshelfRow?.append(bookDiv);
 }

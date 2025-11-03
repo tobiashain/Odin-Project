@@ -1,18 +1,81 @@
-@charset "UTF-8";
 * {
   margin: 0;
+  user-select: none; /* Standard */
+  -webkit-user-select: none; /* Chrome, Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
 }
 
 body {
   height: 100svh;
-  overflow: hidden;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 .container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100svh;
+  margin-top: 50px;
+}
+
+dialog {
+  border: 1px solid black;
+}
+dialog .item {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.addBookContainer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  top: 20px;
+}
+
+#addBookForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  margin: 0 auto;
+  padding: 10px 10px;
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: #e2f3ff;
+}
+#addBookForm label {
+  font-size: 0.85rem;
+  color: #333;
+  margin-right: 0.3rem;
+}
+#addBookForm input[type=text],
+#addBookForm input[type=number] {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 140px;
+}
+#addBookForm input[type=checkbox] {
+  transform: scale(1.2);
+  margin-left: 0.25rem;
+}
+
+button {
+  padding: 0.45rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #0078d4;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+button:hover {
+  background-color: #005fa3;
 }
 
 .bookshelf {
@@ -42,8 +105,8 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  border-left: 60px solid #8f5329;
-  border-right: 60px solid #8f5329;
+  border-left: 62px solid #8f5329;
+  border-right: 62px solid #8f5329;
   border-radius: inherit;
   pointer-events: none;
 }
@@ -114,6 +177,7 @@ body {
   align-items: end;
   perspective: 800px;
   transform-style: preserve-3d;
+  pointer-events: none;
 }
 
 .book {
@@ -129,6 +193,12 @@ body {
   transform: translateZ(0);
   position: relative;
   transform-style: preserve-3d;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  pointer-events: auto;
+}
+.book:hover, .book:hover .left, .book:hover .right {
+  box-shadow: 0 0 3px 3px var(--outline-color);
 }
 .book .title {
   writing-mode: vertical-rl;
@@ -139,13 +209,14 @@ body {
   position: absolute;
 }
 
-/* Back cover – behind the spine */
 .book .left {
   width: 200px;
   height: 150px;
   left: -100px;
   transform: translateZ(-100px) rotateY(270deg);
-  background: rgb(100, 100, 160);
+  background: rgb(121, 121, 172);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
 }
 
 .book .right {
@@ -153,14 +224,7 @@ body {
   height: 150px;
   right: -100px;
   transform: translateZ(-100px) rotateY(270deg);
-  background: rgb(100, 100, 160);
-}
-
-/* Top face – horizontal surface of pages */
-.book .top {
-  width: 40px;
-  height: 40px;
-  transform: rotateX(90deg) translateY(-75px);
-  transform-origin: top center;
-  background: rgb(180, 180, 230);
+  background: rgb(121, 121, 172);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
 }

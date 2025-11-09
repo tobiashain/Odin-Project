@@ -26,6 +26,9 @@ dialog .item {
   gap: 5px;
   margin-bottom: 10px;
 }
+dialog:focus {
+  outline: none;
+}
 
 .addBookContainer {
   position: relative;

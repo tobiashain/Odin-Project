@@ -36,6 +36,10 @@ dialog {
     gap: 5px;
     margin-bottom: 10px;
   }
+
+  &:focus {
+    outline: none;
+  }
 }
 
 .addBookContainer {

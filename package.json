@@ -10,7 +10,9 @@
     "prettier": "prettier --write .",
     "format": "npm run lint:fix && npm run prettier",
     "tsc": "tsc --watch",
-    "sass": "sass --watch . --style=expanded --no-source-map"
+    "sass": "sass --watch . --style=expanded --no-source-map",
+    "dev": "webpack serve --mode development --open",
+    "build": "webpack --mode production"
   },
   "keywords": [],
   "author": "",
@@ -18,17 +20,29 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.17.0",
+    "copy-webpack-plugin": "^13.0.1",
+    "css-loader": "^7.1.2",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.37.3",
+    "fork-ts-checker-webpack-plugin": "^9.1.0",
+    "glob": "^13.0.0",
     "globals": "^15.14.0",
+    "html-webpack-plugin": "^5.6.5",
+    "mini-css-extract-plugin": "^2.9.4",
     "prettier": "^3.4.2",
     "prettier-eslint": "^16.3.0",
     "prettier-eslint-cli": "^8.0.1",
-    "typescript": "^5.9.2"
+    "sass": "^1.94.2",
+    "sass-loader": "^16.0.6",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
+    "webpack": "^5.103.0",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
   },
   "dependencies": {
-    "sass": "^1.93.2"
+    "fs": "^0.0.1-security"
   }
 }

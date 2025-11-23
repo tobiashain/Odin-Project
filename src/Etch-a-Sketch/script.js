@@ -17,13 +17,13 @@ document.querySelector('#width').addEventListener('input', () => {
 });
 
 function createGrid() {
-  for (i = 0; i < height; i++) {
+  for (let i = 0; i < height; i++) {
     const column = document.createElement('div');
     column.classList.add('column');
-	// appendChild is older and only supports Nodes
-	// append is modern and allows multiple appends and text
+    // appendChild is older and only supports Nodes
+    // append is modern and allows multiple appends and text
     container.appendChild(column);
-    for (j = 0; j < width; j++) {
+    for (let j = 0; j < width; j++) {
       const box = document.createElement('div');
       box.classList.add('box');
       column.appendChild(box);
@@ -38,7 +38,7 @@ function createGrid() {
         box.style.backgroundColor = `rgb(${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)})`;
         box.style.opacity = 0.2;
       } else {
-		  //CSS values are always strings
+        //CSS values are always strings
         box.style.opacity = (parseFloat(box.style.opacity) + 0.2).toString();
       }
     });

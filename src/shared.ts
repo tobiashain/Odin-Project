@@ -1,6 +1,6 @@
 const btn = document.createElement('button');
 btn.textContent = 'Back To Home';
-btn.style.position = 'absolute';
+btn.style.position = 'fixed';
 btn.style.right = '10px';
 btn.style.bottom = '10px';
 btn.style.padding = '8px 16px';

@@ -12,9 +12,17 @@ interface Node {
 
 const content = document.querySelector('#content');
 
+document.querySelector('#home')?.classList.add('active');
+
 document.querySelectorAll('nav>button').forEach((btn) => {
   btn.addEventListener('click', (e: Event) => {
     const id: string = (e.target as HTMLButtonElement)!.id;
+
+    document
+      .querySelectorAll('nav>button')
+      .forEach((b) => b.classList.remove('active'));
+    (e.target as HTMLButtonElement).classList.add('active');
+
     if (!content) {
       return;
     }

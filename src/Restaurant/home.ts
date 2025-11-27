@@ -65,6 +65,11 @@ export default {
       class: 'menu',
       children: [
         {
+          tag: 'h2',
+          class: 'subtitle',
+          children: ['Menu'],
+        },
+        {
           tag: 'div',
           class: 'flex-container',
           children: [
@@ -75,9 +80,24 @@ export default {
                 {
                   tag: 'img',
                   class: 'flex-image',
-                  attrs: 'https://picsum.photos/800/500',
+                  attrs: 'https://picsum.photos/800/500?random=1',
                 },
-                'Lorem ipsum dolor sit',
+                {
+                  tag: 'h3',
+                  children: ['Dish Name'],
+                },
+                {
+                  tag: 'p',
+                  class: 'price',
+                  children: ['$12.99'],
+                },
+                {
+                  tag: 'p',
+                  class: 'description',
+                  children: [
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                  ],
+                },
               ],
             },
             {
@@ -87,9 +107,24 @@ export default {
                 {
                   tag: 'img',
                   class: 'flex-image',
-                  attrs: 'https://picsum.photos/800/500',
+                  attrs: 'https://picsum.photos/800/500?random=1',
                 },
-                'Lorem ipsum dolor sit',
+                {
+                  tag: 'h3',
+                  children: ['Dish Name'],
+                },
+                {
+                  tag: 'p',
+                  class: 'price',
+                  children: ['$12.99'],
+                },
+                {
+                  tag: 'p',
+                  class: 'description',
+                  children: [
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                  ],
+                },
               ],
             },
             {
@@ -99,9 +134,24 @@ export default {
                 {
                   tag: 'img',
                   class: 'flex-image',
-                  attrs: 'https://picsum.photos/800/500',
+                  attrs: 'https://picsum.photos/800/500?random=1',
                 },
-                'Lorem ipsum dolor sit',
+                {
+                  tag: 'h3',
+                  children: ['Dish Name'],
+                },
+                {
+                  tag: 'p',
+                  class: 'price',
+                  children: ['$12.99'],
+                },
+                {
+                  tag: 'p',
+                  class: 'description',
+                  children: [
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                  ],
+                },
               ],
             },
           ],

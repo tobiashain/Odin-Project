@@ -4,8 +4,15 @@ export default {
   children: [
     {
       tag: 'h2',
-      class: 'title',
-      children: ['Contact'],
+      class: 'subtitle',
+      children: ['Contact Us'],
+    },
+    {
+      tag: 'div',
+      class: 'contact-container',
+      children: [
+        // Contact form and/or contact details
+      ],
     },
   ],
 };

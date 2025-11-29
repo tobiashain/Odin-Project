@@ -12,6 +12,15 @@ enum State {
 }
 type Task = NoteTask | ChecklistTask;
 
+interface FormValues {
+  title: string;
+  description: string | undefined;
+  dueDate: Date;
+  priority: Priority;
+  note?: string;
+  checklist?: string[];
+}
+
 class Todo {
   constructor(
     id: string,
@@ -39,7 +48,7 @@ class NoteTask {
 }
 
 class ChecklistTask {
-  constructor(list: [string, boolean][]) {}
+  constructor(list: [string, boolean | undefined][]) {}
 }
 
 class DOMHandler {
@@ -64,29 +73,53 @@ class DOMHandler {
       this.form.addEventListener('submit', (e) => {
         e.preventDefault();
         const data = new FormData(this.form);
-        const formData = {
+
+        const note = data.get('note');
+        const checklist = data.getAll('checklist[]');
+
+        const formData: FormValues = {
           title: data.get('title') as string,
           description: data.get('description') as string,
-          dueData: new Date(data.get('dueDate') as string),
+          dueDate: new Date(data.get('dueDate') as string),
           priority: data.get('priority') as Priority,
-          state: data.get('state') as State,
         };
+
+        const hasNote = typeof note === 'string' && note.trim() !== '';
+        const hasChecklist = Array.isArray(checklist) && checklist.length > 0;
+
+        const valid =
+          typeof formData.title === 'string' &&
+          formData.title.trim() !== '' &&
+          formData.dueDate instanceof Date &&
+          !isNaN(formData.dueDate.getTime()) &&
+          Boolean(formData.priority) &&
+          (hasNote || hasChecklist);
+
+        if (!valid) {
+          alert('invalid');
+          return;
+        }
+
+        if (note !== null) {
+          formData.note = String(note);
+        } else if (checklist.length > 0) {
+          formData.checklist = checklist.map((v) => String(v));
+        }
       });
     }
   }
 
   private selectTask() {
     if (this.selectTaskElement && this.taskDiv) {
-      this.selectTaskElement.addEventListener('change', (e) => {
-        const target = e.target as HTMLSelectElement;
+      const renderTaskControls = (value: string) => {
         this.taskDiv!.innerHTML = '';
-        if (target.value === 'notes') {
+        if (value === 'notes') {
           const noteInput = document.createElement('input');
           noteInput.type = 'text';
           noteInput.placeholder = 'Enter your note';
           noteInput.name = 'note';
           this.taskDiv!.appendChild(noteInput);
-        } else if (target.value === 'checklist') {
+        } else if (value === 'checklist') {
           const itemInput = document.createElement('input');
           itemInput.type = 'text';
           itemInput.placeholder = 'Enter checklist item';
@@ -95,13 +128,32 @@ class DOMHandler {
           addButton.type = 'button';
           addButton.textContent = 'Add item';
 
-          const listContainer = document.createElement('ul');
+          const listContainer = document.createElement('div');
 
           addButton.addEventListener('click', () => {
             if (itemInput.value.trim() === '') return;
-            const li = document.createElement('li');
-            li.textContent = itemInput.value;
-            listContainer.appendChild(li);
+            const wrapper = document.createElement('div');
+
+            const itemHidden = document.createElement('input');
+            itemHidden.type = 'text';
+            itemHidden.name = 'checklist[]';
+            itemHidden.value = itemInput.value;
+            itemHidden.readOnly = true;
+            itemHidden.style.display = 'none';
+
+            const label = document.createElement('span');
+            label.textContent = itemInput.value;
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.textContent = 'Remove';
+            removeBtn.addEventListener('click', () => wrapper.remove());
+
+            wrapper.appendChild(itemHidden);
+            wrapper.appendChild(label);
+            wrapper.appendChild(removeBtn);
+
+            listContainer.appendChild(wrapper);
             itemInput.value = '';
           });
 
@@ -109,7 +161,14 @@ class DOMHandler {
           this.taskDiv!.appendChild(addButton);
           this.taskDiv!.appendChild(listContainer);
         }
+      };
+
+      this.selectTaskElement.addEventListener('change', (e) => {
+        const target = e.target as HTMLSelectElement;
+        renderTaskControls(target.value);
       });
+
+      renderTaskControls(this.selectTaskElement.value);
     }
   }
 }

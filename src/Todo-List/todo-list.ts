@@ -66,6 +66,35 @@ class ObservableTodoMap {
     return this.map.entries();
   }
 
+  public filter(predicate: (todo: Todo) => boolean): Map<string, Todo> {
+    const result = new Map<string, Todo>();
+    for (const [id, todo] of this.map) {
+      if (predicate(todo)) result.set(id, todo);
+    }
+    return result;
+  }
+
+  public seed() {
+    const raw = localStorage.getItem('todoMap');
+    if (raw) {
+      const parsed: StoredTodo[] = JSON.parse(raw);
+      for (const { id, data } of parsed) {
+        this.map.set(
+          id,
+          new Todo(
+            data.id,
+            data.title,
+            data.description,
+            new Date(data.dueDate),
+            data.priority,
+            data.state,
+            data.task,
+          ),
+        );
+      }
+    }
+  }
+
   public subscribe(listener: TodoMapListener) {
     this.listeners.add(listener);
 
@@ -76,7 +105,7 @@ class ObservableTodoMap {
     };
   }
 
-  private notify(event: TodoMapEvent) {
+  public notify(event: TodoMapEvent) {
     for (const listener of Array.from(this.listeners)) {
       try {
         listener(event, this.map);
@@ -120,17 +149,22 @@ class Todo {
     return this._task;
   }
 
-  public editTask(title: string, description?: string, task?: Task) {
-    this._title = title;
-    this._description = description;
-    this._task = task;
+  public editTask(payload: {
+    title?: string;
+    description?: string;
+    dueDate?: Date;
+    priority?: Priority;
+    state?: State;
+    task?: Task | undefined;
+  }) {
+    if (payload.title !== undefined) this._title = payload.title;
+    if (payload.description !== undefined)
+      this._description = payload.description;
+    if (payload.dueDate) this._dueDate = payload.dueDate;
+    if (payload.priority) this._priority = payload.priority;
+    if (payload.state) this._state = payload.state;
+    if (payload.task !== undefined) this._task = payload.task;
   }
-
-  public changePriority(priority: Priority) {
-    this._priority = priority;
-  }
-
-  public filter(done: boolean) {}
 
   public toJSON() {
     return {
@@ -153,6 +187,55 @@ class ChecklistTask {
 
   get items() {
     return this._items;
+  }
+}
+
+class DOMHandler {
+  private _containerDiv: HTMLElement | null;
+
+  get containerDiv() {
+    return this._containerDiv;
+  }
+
+  constructor() {
+    this._containerDiv = document.querySelector('.container');
+  }
+
+  public createDiv(text?: string, className?: string): HTMLDivElement {
+    const div = document.createElement('div');
+    if (text) div.innerText = text;
+    if (className) div.className = className;
+    return div;
+  }
+
+  public createSelect<T extends string>(
+    values: T[],
+    defaultValue: T,
+    onChange?: (value: T) => void,
+  ): HTMLSelectElement {
+    const select = document.createElement('select');
+    for (const v of values) {
+      const option = document.createElement('option');
+      option.value = v;
+      option.textContent = v;
+      select.appendChild(option);
+    }
+    select.value = defaultValue;
+    if (onChange)
+      select.addEventListener('change', () => onChange(select.value as T));
+    return select;
+  }
+
+  public createDateInput(
+    date: Date,
+    onChange?: (value: Date) => void,
+  ): HTMLInputElement {
+    const input = document.createElement('input');
+    input.type = 'date';
+    input.value = date.toISOString().slice(0, 10);
+    if (onChange)
+      input.addEventListener('change', () => onChange(new Date(input.value)));
+    return input;
   }
 }
 
@@ -297,7 +380,10 @@ document.addEventListener('DOMContentLoaded', () => {
   new FormHandler();
 });
 
+const dom = new DOMHandler();
 const todoMap = new ObservableTodoMap();
+
+todoMap.seed();
 
 todoMap.subscribe((event: TodoMapEvent, map: Map<string, Todo>) => {
   if (event.type !== 'bulk') {
@@ -315,22 +401,41 @@ todoMap.subscribe((event: TodoMapEvent, map: Map<string, Todo>) => {
   console.log(map);
 });
 
-const raw = localStorage.getItem('todoMap');
+todoMap.subscribe((event: TodoMapEvent, map: Map<string, Todo>) => {
+  if (event.type === 'bulk') {
+    for (const [id, todo] of event.items) {
+      const el = document.createElement('div');
+      el.id = todo.id;
 
-if (raw) {
-  const parsed: StoredTodo[] = JSON.parse(raw);
-  for (const { id, data } of parsed) {
-    todoMap.set(
-      id,
-      new Todo(
-        data.id,
-        data.title,
-        data.description,
-        new Date(data.dueDate),
-        data.priority,
-        data.state,
-        data.task,
-      ),
-    );
+      el.appendChild(dom.createDiv(todo.title, 'todo-title'));
+      if (todo.description)
+        el.appendChild(dom.createDiv(todo.description, 'todo-desc'));
+
+      el.appendChild(
+        dom.createDateInput(todo.dueDate, (date) => {
+          todo.editTask({ dueDate: date });
+          todoMap.notify({ type: 'set', id: todo.id, todo });
+        }),
+      );
+
+      el.appendChild(
+        dom.createSelect(Object.values(Priority), todo.priority, (value) => {
+          todo.editTask({ priority: value as Priority });
+          todoMap.notify({ type: 'set', id: todo.id, todo });
+        }),
+      );
+
+      el.appendChild(
+        dom.createSelect(Object.values(State), todo.state, (value) => {
+          todo.editTask({ state: value as State });
+          todoMap.notify({ type: 'set', id: todo.id, todo });
+        }),
+      );
+
+      dom.containerDiv?.appendChild(el);
+    }
+
+    //console.log(todoMap.filter((t) => t.priority === Priority.High));
+    return;
   }
-}
+});

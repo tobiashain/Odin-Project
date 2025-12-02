@@ -1,0 +1,95 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+form {
+  position: absolute;
+}
+
+.content {
+  width: 100%;
+  height: 100svh;
+  display: flex;
+}
+
+aside {
+  width: 20svw;
+  background-color: aquamarine;
+}
+main {
+  width: 80svw;
+}
+.settings {
+  height: 20svh;
+  background-color: aqua;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-auto-rows: 300px;
+  gap: 20px;
+  background-color: rgb(235, 235, 235);
+  height: 80svh;
+  padding: 20px;
+  box-sizing: border-box;
+
+  .todo {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 10px;
+    border-left: 15px solid orange;
+    padding: 15px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+
+    &:hover {
+      background-color: whitesmoke;
+    }
+
+    .title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+  }
+
+  .addTodo {
+    position: relative;
+    border: 3px dashed grey;
+    color: grey;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+      border: 3px dashed black;
+      background-color: whitesmoke;
+      color: black;
+    }
+
+    .plus {
+      aspect-ratio: 1/1;
+      height: 50%;
+    }
+
+    .text {
+      position: absolute;
+      font-size: 1.2rem;
+      bottom: 40px;
+    }
+
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+  }
+}

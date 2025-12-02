@@ -107,7 +107,7 @@ export default {
                 {
                   tag: 'img',
                   class: 'flex-image',
-                  attrs: 'https://picsum.photos/800/500?random=1',
+                  attrs: 'https://picsum.photos/800/500?random=2',
                 },
                 {
                   tag: 'h3',
@@ -134,7 +134,7 @@ export default {
                 {
                   tag: 'img',
                   class: 'flex-image',
-                  attrs: 'https://picsum.photos/800/500?random=1',
+                  attrs: 'https://picsum.photos/800/500?random=3',
                 },
                 {
                   tag: 'h3',

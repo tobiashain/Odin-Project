@@ -406,6 +406,7 @@ todoMap.subscribe((event: TodoMapEvent, map: Map<string, Todo>) => {
     for (const [id, todo] of event.items) {
       const el = document.createElement('div');
       el.id = todo.id;
+      el.className = 'todo';
 
       el.appendChild(dom.createDiv(todo.title, 'todo-title'));
       if (todo.description)

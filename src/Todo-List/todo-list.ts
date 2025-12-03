@@ -192,23 +192,40 @@ class ChecklistTask {
 
 class DOMHandler {
   private _containerDiv: HTMLElement | null;
+  private _addTodoDiv: HTMLElement | null;
 
   get containerDiv() {
     return this._containerDiv;
   }
 
-  constructor() {
-    this._containerDiv = document.querySelector('.container');
+  get addTodoDiv() {
+    return this._addTodoDiv;
   }
 
-  public createDiv(text?: string, className?: string): HTMLDivElement {
+  constructor() {
+    this._containerDiv = document.querySelector('.container');
+    this._addTodoDiv = document.querySelector('.addTodo');
+    this.bindEvents();
+  }
+
+  private bindEvents() {
+    if (this._addTodoDiv) {
+      this._addTodoDiv?.addEventListener('click', () => {
+        if (formHandler.dialogForm) {
+          formHandler.dialogForm.showModal();
+        }
+      });
+    }
+  }
+
+  private createDiv(text?: string, className?: string): HTMLDivElement {
     const div = document.createElement('div');
     if (text) div.innerText = text;
     if (className) div.className = className;
     return div;
   }
 
-  public createSelect<T extends string>(
+  private createSelect<T extends string>(
     values: T[],
     defaultValue: T,
     onChange?: (value: T) => void,
@@ -226,7 +243,7 @@ class DOMHandler {
     return select;
   }
 
-  public createDateInput(
+  private createDateInput(
     date: Date,
     onChange?: (value: Date) => void,
   ): HTMLInputElement {
@@ -237,21 +254,108 @@ class DOMHandler {
       input.addEventListener('change', () => onChange(new Date(input.value)));
     return input;
   }
+
+  public renderTodo(todo: Todo): HTMLElement {
+    const el = document.createElement('div');
+    el.id = todo.id;
+    el.className = 'todo';
+    el.appendChild(this.createDiv(todo.title, 'todo-title'));
+    if (todo.description)
+      el.appendChild(this.createDiv(todo.description, 'todo-desc'));
+    const dateInput = this.createDateInput(todo.dueDate, (date) => {
+      todo.editTask({ dueDate: date });
+      todoMap.notify({ type: 'set', id: todo.id, todo });
+    });
+    dateInput.className = 'todo-date';
+    el.appendChild(dateInput);
+
+    const priority = this.createSelect(
+      Object.values(Priority),
+      todo.priority,
+      (value) => {
+        todo.editTask({ priority: value as Priority });
+        todoMap.notify({ type: 'set', id: todo.id, todo });
+      },
+    );
+    priority.className = 'todo-priority';
+    el.appendChild(priority);
+
+    const state = this.createSelect(
+      Object.values(State),
+      todo.state,
+      (value) => {
+        todo.editTask({ state: value as State });
+        todoMap.notify({ type: 'set', id: todo.id, todo });
+      },
+    );
+    state.className = 'todo-priority';
+    el.appendChild(state);
+
+    return el;
+  }
+
+  public updateTodoRow(row: HTMLElement, todo: Todo): void {
+    const title = row.querySelector('.todo-title');
+    if (title) title.textContent = todo.title;
+
+    const desc = row.querySelector('.todo-desc');
+    if (desc) {
+      if (todo.description) {
+        desc.textContent = todo.description;
+      } else {
+        desc.remove();
+      }
+    } else if (todo.description) {
+      const newDesc = this.createDiv(todo.description, 'todo-desc');
+      row.insertBefore(newDesc, row.querySelector('.todo-date'));
+    }
+
+    const dateInput = row.querySelector('.todo-date') as HTMLInputElement;
+    if (dateInput) {
+      dateInput.value = todo.dueDate.toISOString().slice(0, 10);
+    }
+
+    const priority = row.querySelector('.todo-priority') as HTMLSelectElement;
+    if (priority) {
+      priority.value = todo.priority;
+    }
+
+    const state = row.querySelector('.todo-state') as HTMLSelectElement;
+    if (state) {
+      state.value = todo.state;
+    }
+  }
 }
 
 class FormHandler {
   private form: HTMLFormElement | undefined;
   private selectTaskElement: HTMLSelectElement | null;
   private taskDiv: HTMLElement | null;
+  private _dialogForm: HTMLDialogElement | null;
+  private submitBtn: HTMLButtonElement | null;
+  private closeBtn: HTMLButtonElement | null;
+
+  get dialogForm() {
+    return this._dialogForm;
+  }
   constructor() {
     this.form = document.querySelector('form') as HTMLFormElement;
     this.selectTaskElement = document.querySelector('#selectTask');
     this.taskDiv = document.querySelector('#taskDiv');
+    this._dialogForm = document.querySelector('dialog');
+    this.submitBtn = document.querySelector('#submitBtn');
+    this.closeBtn = document.querySelector('#closeBtn');
 
     this.bindEvents();
   }
 
   private bindEvents() {
+    if (this.closeBtn && this._dialogForm && this.form) {
+      this.closeBtn.addEventListener('click', () => {
+        this.form!.reset();
+        this._dialogForm!.close();
+      });
+    }
     this.selectTask();
     this.fetchTask();
   }
@@ -308,6 +412,10 @@ class FormHandler {
           formData.task,
         );
         todoMap.set(id, todo);
+        if (this._dialogForm) {
+          this._dialogForm.close();
+          this.form!.reset();
+        }
       });
     }
   }
@@ -376,11 +484,8 @@ class FormHandler {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  new FormHandler();
-});
-
-const dom = new DOMHandler();
+const formHandler = new FormHandler();
+const domHandler = new DOMHandler();
 const todoMap = new ObservableTodoMap();
 
 todoMap.seed();
@@ -402,41 +507,42 @@ todoMap.subscribe((event: TodoMapEvent, map: Map<string, Todo>) => {
 });
 
 todoMap.subscribe((event: TodoMapEvent, map: Map<string, Todo>) => {
-  if (event.type === 'bulk') {
-    for (const [id, todo] of event.items) {
-      const el = document.createElement('div');
-      el.id = todo.id;
-      el.className = 'todo';
-
-      el.appendChild(dom.createDiv(todo.title, 'todo-title'));
-      if (todo.description)
-        el.appendChild(dom.createDiv(todo.description, 'todo-desc'));
-
-      el.appendChild(
-        dom.createDateInput(todo.dueDate, (date) => {
-          todo.editTask({ dueDate: date });
-          todoMap.notify({ type: 'set', id: todo.id, todo });
-        }),
-      );
-
-      el.appendChild(
-        dom.createSelect(Object.values(Priority), todo.priority, (value) => {
-          todo.editTask({ priority: value as Priority });
-          todoMap.notify({ type: 'set', id: todo.id, todo });
-        }),
-      );
-
-      el.appendChild(
-        dom.createSelect(Object.values(State), todo.state, (value) => {
-          todo.editTask({ state: value as State });
-          todoMap.notify({ type: 'set', id: todo.id, todo });
-        }),
-      );
-
-      dom.containerDiv?.appendChild(el);
+  const nodes = new Map<string, HTMLElement>();
+  const container = domHandler.containerDiv;
+  if (container) {
+    if (event.type === 'bulk') {
+      //container.innerHTML = '';
+      nodes.clear();
+      for (const [id, todo] of event.items) {
+        const el = domHandler.renderTodo(todo);
+        container.appendChild(el);
+        nodes.set(id, el);
+      }
     }
 
-    //console.log(todoMap.filter((t) => t.priority === Priority.High));
-    return;
+    if (event.type === 'set') {
+      const todo = event.todo;
+      const existing = nodes.get(todo.id);
+      if (existing) {
+        domHandler.updateTodoRow(existing, todo);
+      } else {
+        const el = domHandler.renderTodo(todo);
+        container.appendChild(el);
+        nodes.set(todo.id, el);
+      }
+    }
+
+    if (event.type === 'delete') {
+      const el = nodes.get(event.id);
+      if (el) {
+        el.remove();
+        nodes.delete(event.id);
+      }
+    }
+
+    if (event.type === 'clear') {
+      container.innerHTML = '';
+      nodes.clear();
+    }
   }
 });

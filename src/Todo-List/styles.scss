@@ -7,10 +7,6 @@ body {
   font-family: 'Inter', system-ui, sans-serif;
 }
 
-form {
-  position: absolute;
-}
-
 .content {
   width: 100%;
   height: 100svh;
@@ -29,6 +25,13 @@ main {
   background-color: aqua;
 }
 
+dialog {
+  height: 50%;
+  width: 50%;
+  position: absolute;
+  margin: auto;
+}
+
 .container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -38,6 +41,7 @@ main {
   height: 80svh;
   padding: 20px;
   box-sizing: border-box;
+  overflow-y: scroll;
 
   .todo {
     display: flex;

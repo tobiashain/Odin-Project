@@ -256,14 +256,28 @@ class DOMHandler {
 
   private createDateInput(
     date: Date,
-    onChange?: (value: Date) => void,
+    onChange?: (value: string) => void,
   ): HTMLInputElement {
     const input = document.createElement('input');
     input.type = 'date';
-    input.value = date.toISOString().slice(0, 10);
-    if (onChange)
-      input.addEventListener('change', () => onChange(new Date(input.value)));
+    input.min = new Date().toISOString().split('T')[0] ?? '';
+    input.value = (date ?? new Date()).toISOString().slice(0, 10);
+    if (onChange) {
+      input.addEventListener('change', () => {
+        if (!input.value) {
+          input.value = new Date().toISOString().slice(0, 10);
+        }
+        onChange(input.value);
+      });
+    }
     return input;
+  }
+
+  private makeLabel(forId: string, text: string): HTMLLabelElement {
+    const label = document.createElement('label') as HTMLLabelElement;
+    label.setAttribute('for', forId);
+    label.textContent = text;
+    return label;
   }
 
   public renderTodo(todo: Todo): HTMLElement {
@@ -273,12 +287,40 @@ class DOMHandler {
     el.appendChild(this.createDiv(todo.title, 'todo-title'));
     if (todo.description)
       el.appendChild(this.createDiv(todo.description, 'todo-desc'));
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'wrapper';
+
+    wrapper.appendChild(this.makeLabel('todo-date', 'Due'));
+    wrapper.appendChild(this.makeLabel('todo-priority', 'Priority'));
+    wrapper.appendChild(this.makeLabel('todo-state', 'Progress'));
+
+    el.appendChild(wrapper);
+
     const dateInput = this.createDateInput(todo.dueDate, (date) => {
-      todo.editTask({ dueDate: date });
+      console.log(date);
+      if (!date) {
+        todo.editTask({ dueDate: new Date() });
+      } else {
+        todo.editTask({ dueDate: new Date(date) });
+      }
+
       todoMap.notify({ type: 'set', id: todo.id, todo });
     });
-    dateInput.className = 'todo-date';
-    el.appendChild(dateInput);
+
+    dateInput.addEventListener('click', () => {
+      dateInput.showPicker();
+    });
+
+    if (
+      todo.dueDate.toISOString().slice(0, 10) <
+      new Date().toISOString().slice(0, 10)
+    ) {
+      dateInput.className = 'todo-date overdue';
+    } else {
+      dateInput.className = 'todo-date';
+    }
+    wrapper.appendChild(dateInput);
 
     const priority = this.createSelect(
       Object.values(Priority),
@@ -289,7 +331,7 @@ class DOMHandler {
       },
     );
     priority.className = 'todo-priority';
-    el.appendChild(priority);
+    wrapper.appendChild(priority);
 
     const state = this.createSelect(
       Object.values(State),
@@ -299,8 +341,8 @@ class DOMHandler {
         todoMap.notify({ type: 'set', id: todo.id, todo });
       },
     );
-    state.className = 'todo-priority';
-    el.appendChild(state);
+    state.className = 'todo-state';
+    wrapper.appendChild(state);
 
     return el;
   }
@@ -323,6 +365,7 @@ class DOMHandler {
 
     const dateInput = row.querySelector('.todo-date') as HTMLInputElement;
     if (dateInput) {
+      dateInput.className = '.todo-date';
       dateInput.value = todo.dueDate.toISOString().slice(0, 10);
     }
 

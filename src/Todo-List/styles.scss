@@ -51,16 +51,32 @@ dialog {
     border-left: 15px solid orange;
     padding: 15px;
     transition: background-color 0.2s;
-    cursor: pointer;
 
     &:hover {
       background-color: whitesmoke;
     }
 
-    .title {
+    .todo-title {
       font-size: 1.2rem;
       font-weight: 600;
       margin-bottom: 5px;
+    }
+
+    .wrapper {
+      display: grid;
+      grid-template: 1fr 1fr / 1fr 1fr 1fr;
+      column-gap: 20px;
+    }
+
+    input,
+    select {
+      background-color: transparent;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .overdue {
+      color: red;
     }
   }
 

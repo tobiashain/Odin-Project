@@ -74,7 +74,7 @@ class ObservableTodoMap {
     return result;
   }
 
-  public seed() {
+  public loadData() {
     const raw = localStorage.getItem('todoMap');
     if (raw) {
       const parsed: StoredTodo[] = JSON.parse(raw);
@@ -93,6 +93,16 @@ class ObservableTodoMap {
         );
       }
     }
+  }
+
+  public saveData() {
+    const serialized = JSON.stringify(
+      Array.from(this.map.entries()).map(([id, todo]) => ({
+        id,
+        data: todo.toJSON(),
+      })),
+    );
+    localStorage.setItem('todoMap', serialized);
   }
 
   public subscribe(listener: TodoMapListener) {
@@ -193,6 +203,7 @@ class ChecklistTask {
 class DOMHandler {
   private _containerDiv: HTMLElement | null;
   private _addTodoDiv: HTMLElement | null;
+  public nodes = new Map<string, HTMLElement>();
 
   get containerDiv() {
     return this._containerDiv;
@@ -325,6 +336,54 @@ class DOMHandler {
       state.value = todo.state;
     }
   }
+
+  public handleTodoMapEvent(event: TodoMapEvent) {
+    const container = this._containerDiv;
+    if (!container) return;
+
+    switch (event.type) {
+      case 'bulk':
+        for (const el of this.nodes.values()) {
+          el.remove();
+        }
+        this.nodes.clear();
+        for (const [id, todo] of event.items) {
+          const el = this.renderTodo(todo);
+          container.appendChild(el);
+          this.nodes.set(id, el);
+        }
+        break;
+
+      case 'set': {
+        const todo = event.todo;
+        const existing = this.nodes.get(todo.id);
+        if (existing) {
+          this.updateTodoRow(existing, todo);
+        } else {
+          const el = this.renderTodo(todo);
+          container.appendChild(el);
+          this.nodes.set(todo.id, el);
+        }
+        break;
+      }
+
+      case 'delete': {
+        const el = this.nodes.get(event.id);
+        if (el) {
+          el.remove();
+          this.nodes.delete(event.id);
+        }
+        break;
+      }
+
+      case 'clear':
+        for (const el of this.nodes.values()) {
+          el.remove();
+        }
+        this.nodes.clear();
+        break;
+    }
+  }
 }
 
 class FormHandler {
@@ -332,7 +391,6 @@ class FormHandler {
   private selectTaskElement: HTMLSelectElement | null;
   private taskDiv: HTMLElement | null;
   private _dialogForm: HTMLDialogElement | null;
-  private submitBtn: HTMLButtonElement | null;
   private closeBtn: HTMLButtonElement | null;
 
   get dialogForm() {
@@ -343,7 +401,6 @@ class FormHandler {
     this.selectTaskElement = document.querySelector('#selectTask');
     this.taskDiv = document.querySelector('#taskDiv');
     this._dialogForm = document.querySelector('dialog');
-    this.submitBtn = document.querySelector('#submitBtn');
     this.closeBtn = document.querySelector('#closeBtn');
 
     this.bindEvents();
@@ -488,18 +545,10 @@ const formHandler = new FormHandler();
 const domHandler = new DOMHandler();
 const todoMap = new ObservableTodoMap();
 
-todoMap.seed();
+todoMap.loadData();
 
 todoMap.subscribe((event: TodoMapEvent, map: Map<string, Todo>) => {
-  if (event.type !== 'bulk') {
-    const serialized = JSON.stringify(
-      Array.from(map.entries()).map(([id, todo]) => ({
-        id,
-        data: todo.toJSON(),
-      })),
-    );
-    localStorage.setItem('todoMap', serialized);
-  }
+  if (event.type !== 'bulk') todoMap.saveData();
 });
 
 todoMap.subscribe((event: TodoMapEvent, map: Map<string, Todo>) => {
@@ -507,42 +556,5 @@ todoMap.subscribe((event: TodoMapEvent, map: Map<string, Todo>) => {
 });
 
 todoMap.subscribe((event: TodoMapEvent, map: Map<string, Todo>) => {
-  const nodes = new Map<string, HTMLElement>();
-  const container = domHandler.containerDiv;
-  if (container) {
-    if (event.type === 'bulk') {
-      //container.innerHTML = '';
-      nodes.clear();
-      for (const [id, todo] of event.items) {
-        const el = domHandler.renderTodo(todo);
-        container.appendChild(el);
-        nodes.set(id, el);
-      }
-    }
-
-    if (event.type === 'set') {
-      const todo = event.todo;
-      const existing = nodes.get(todo.id);
-      if (existing) {
-        domHandler.updateTodoRow(existing, todo);
-      } else {
-        const el = domHandler.renderTodo(todo);
-        container.appendChild(el);
-        nodes.set(todo.id, el);
-      }
-    }
-
-    if (event.type === 'delete') {
-      const el = nodes.get(event.id);
-      if (el) {
-        el.remove();
-        nodes.delete(event.id);
-      }
-    }
-
-    if (event.type === 'clear') {
-      container.innerHTML = '';
-      nodes.clear();
-    }
-  }
+  domHandler.handleTodoMapEvent(event);
 });

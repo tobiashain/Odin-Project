@@ -1,27 +1,50 @@
 import backButton from '../shared';
-import type { TodoMapEvent } from './types';
+import type { TodoMapEvent, Subscriptions, TodoMapListener } from './types';
 import { ObservableTodoMap, type Todo } from './todo';
+import { ProjectStore } from './project';
 import { DOMHandler } from './dom-handler';
 
+export const projectMap = new ProjectStore();
+export let todoMap = projectMap.current;
+
 const domHandler = new DOMHandler();
-export const todoMap = new ObservableTodoMap();
+const subscriptions: Subscriptions[] = [];
 
-todoMap.loadData();
+if (todoMap) {
+  todoMap.loadData();
+  console.log(projectMap);
 
-const saveData = todoMap.subscribe(
-  (event: TodoMapEvent, map: Map<string, Todo>) => {
-    if (event.type !== 'bulk') todoMap.saveData();
-  },
-);
+  const saveDataListener: TodoMapListener = (event, map) => {
+    if (event.type !== 'bulk') todoMap!.saveData();
+  };
+  subscriptions.push({
+    listener: saveDataListener,
+    unsubscribe: todoMap.subscribe(saveDataListener),
+  });
 
-const logging = todoMap.subscribe(
-  (event: TodoMapEvent, map: Map<string, Todo>) => {
+  const loggingListener: TodoMapListener = (event, map) => {
     console.log(map);
-  },
-);
+  };
+  subscriptions.push({
+    listener: loggingListener,
+    unsubscribe: todoMap.subscribe(loggingListener),
+  });
 
-const handleTodoMap = todoMap.subscribe(
-  (event: TodoMapEvent, map: Map<string, Todo>) => {
+  const domListener: TodoMapListener = (event, map) => {
     domHandler.handleTodoMapEvent(event);
-  },
-);
+  };
+  subscriptions.push({
+    listener: domListener,
+    unsubscribe: todoMap.subscribe(domListener),
+  });
+}
+
+export function switchTodoMap(map: ObservableTodoMap | undefined) {
+  if (map && todoMap !== map) {
+    subscriptions.forEach(({ unsubscribe }) => unsubscribe());
+    todoMap = map;
+    subscriptions.forEach((sub) => {
+      sub.unsubscribe = todoMap!.subscribe(sub.listener);
+    });
+  }
+}

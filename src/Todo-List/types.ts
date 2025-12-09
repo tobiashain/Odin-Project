@@ -41,3 +41,10 @@ export interface StoredTodo {
     task?: Task;
   };
 }
+
+type Unsubscribe = () => void;
+
+export interface Subscriptions {
+  listener: TodoMapListener;
+  unsubscribe: Unsubscribe;
+}

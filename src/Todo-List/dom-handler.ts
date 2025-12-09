@@ -1,44 +1,76 @@
 import { FormHandler } from './form-handler';
 import { type Todo } from './todo';
-import { todoMap } from './index';
+import { todoMap, projectMap, switchTodoMap } from './index';
 import { State, Priority, type TodoMapEvent } from './types';
 
 const formHandler = new FormHandler();
 
 export class DOMHandler {
-  private _containerDiv: HTMLElement | null;
-  private _addTodoDiv: HTMLElement | null;
+  private containerDiv: HTMLElement | null;
+  private addTodoDiv: HTMLElement | null;
+  private projectListDiv: HTMLElement | null;
   public nodes = new Map<string, HTMLElement>();
 
-  get containerDiv() {
-    return this._containerDiv;
-  }
-
-  get addTodoDiv() {
-    return this._addTodoDiv;
-  }
-
   constructor() {
-    this._containerDiv = document.querySelector('.container');
-    this._addTodoDiv = document.querySelector('.addTodo');
+    this.containerDiv = document.querySelector('.container');
+    this.addTodoDiv = document.querySelector('#addTodo');
+    this.projectListDiv = document.querySelector('#projectList');
     this.bindEvents();
   }
 
   private bindEvents() {
-    if (this._addTodoDiv) {
-      this._addTodoDiv?.addEventListener('click', () => {
+    if (this.addTodoDiv) {
+      this.addTodoDiv?.addEventListener('click', () => {
         if (formHandler.dialogForm) {
           formHandler.dialogForm.showModal();
         }
       });
     }
+
+    if (this.projectListDiv) {
+      const projects = projectMap.listProjects();
+      this.projectListDiv.innerHTML = '';
+      const ul = document.createElement('ul');
+      projects.forEach((project) => {
+        const li = document.createElement('li');
+        li.innerText = project;
+        li.addEventListener('click', () => {
+          switchTodoMap(projectMap.selectProject(project));
+        });
+        ul.appendChild(li);
+      });
+      this.projectListDiv.appendChild(ul);
+    }
   }
 
-  private createDiv(text?: string, className?: string): HTMLDivElement {
-    const div = document.createElement('div');
-    if (text) div.innerText = text;
-    if (className) div.className = className;
-    return div;
+  private createDiv(
+    text: string,
+    className: string,
+    onChange?: (value: string) => void,
+  ): HTMLTextAreaElement {
+    const input = document.createElement('textarea');
+    input.value = text;
+    input.className = className;
+    input.setAttribute('rows', '1');
+
+    const adjustHeight = () => {
+      input.style.height = 'auto';
+      input.style.height = input.scrollHeight + 'px';
+
+      if (input.scrollHeight > parseInt(getComputedStyle(input).maxHeight)) {
+        input.style.overflowY = 'auto';
+      } else {
+        input.style.overflowY = 'hidden';
+      }
+    };
+
+    setTimeout(adjustHeight, 0);
+
+    input.addEventListener('input', adjustHeight);
+    if (onChange) {
+      input.addEventListener('change', () => onChange(input.value));
+    }
+    return input;
   }
 
   private createSelect<T extends string>(
@@ -54,8 +86,10 @@ export class DOMHandler {
       select.appendChild(option);
     }
     select.value = defaultValue;
-    if (onChange)
+    if (onChange) {
       select.addEventListener('change', () => onChange(select.value as T));
+    }
+
     return select;
   }
 
@@ -89,9 +123,19 @@ export class DOMHandler {
     const el = document.createElement('div');
     el.id = todo.id;
     el.className = 'todo';
-    el.appendChild(this.createDiv(todo.title, 'todo-title'));
+    el.appendChild(
+      this.createDiv(todo.title, 'todo-title', (value) => {
+        todo.editTask({ title: value });
+        todoMap!.notify({ type: 'set', id: todo.id, todo });
+      }),
+    );
     if (todo.description)
-      el.appendChild(this.createDiv(todo.description, 'todo-desc'));
+      el.appendChild(
+        this.createDiv(todo.description, 'todo-desc', (value) => {
+          todo.editTask({ description: value });
+          todoMap!.notify({ type: 'set', id: todo.id, todo });
+        }),
+      );
 
     const wrapper = document.createElement('div');
     wrapper.className = 'wrapper';
@@ -110,7 +154,7 @@ export class DOMHandler {
         todo.editTask({ dueDate: new Date(date) });
       }
 
-      todoMap.notify({ type: 'set', id: todo.id, todo });
+      todoMap!.notify({ type: 'set', id: todo.id, todo });
     });
 
     dateInput.addEventListener('click', () => {
@@ -132,7 +176,7 @@ export class DOMHandler {
       todo.priority,
       (value) => {
         todo.editTask({ priority: value as Priority });
-        todoMap.notify({ type: 'set', id: todo.id, todo });
+        todoMap!.notify({ type: 'set', id: todo.id, todo });
       },
     );
     priority.className = 'todo-priority';
@@ -143,7 +187,7 @@ export class DOMHandler {
       todo.state,
       (value) => {
         todo.editTask({ state: value as State });
-        todoMap.notify({ type: 'set', id: todo.id, todo });
+        todoMap!.notify({ type: 'set', id: todo.id, todo });
       },
     );
     state.className = 'todo-state';
@@ -193,7 +237,7 @@ export class DOMHandler {
   }
 
   public handleTodoMapEvent(event: TodoMapEvent) {
-    const container = this._containerDiv;
+    const container = this.containerDiv;
     if (!container) return;
 
     switch (event.type) {

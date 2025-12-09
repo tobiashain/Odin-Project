@@ -69,18 +69,30 @@ dialog {
     }
 
     input,
-    select {
+    select,
+    textarea {
       background-color: transparent;
       border: 0;
       cursor: pointer;
     }
 
+    textarea {
+      resize: none;
+      overflow-y: hidden;
+      height: auto;
+      box-sizing: border-box;
+      overflow-wrap: break-word;
+      line-height: 1.5em;
+      max-height: 6em;
+      min-height: 1.5em;
+      margin-bottom: 10px;
+    }
     .overdue {
       color: red;
     }
   }
 
-  .addTodo {
+  #addTodo {
     position: relative;
     border: 3px dashed grey;
     color: grey;

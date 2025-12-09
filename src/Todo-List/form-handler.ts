@@ -84,7 +84,7 @@ export class FormHandler {
           State.NotStarted,
           formData.task,
         );
-        todoMap.set(id, todo);
+        todoMap!.set(id, todo);
         if (this._dialogForm) {
           this._dialogForm.close();
           this.form!.reset();

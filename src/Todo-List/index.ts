@@ -11,11 +11,12 @@ const domHandler = new DOMHandler();
 const subscriptions: Subscriptions[] = [];
 
 if (todoMap) {
-  todoMap.loadData();
   console.log(projectMap);
 
   const saveDataListener: TodoMapListener = (event, map) => {
-    if (event.type !== 'bulk') todoMap!.saveData();
+    if (event.type !== 'bulk' && event.type !== 'clear')
+      projectMap.saveProject(event.id, event.type);
+    if (event.type === 'clear') projectMap.saveProjects();
   };
   subscriptions.push({
     listener: saveDataListener,

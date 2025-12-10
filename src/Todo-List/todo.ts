@@ -4,7 +4,6 @@ import {
   type Task,
   State,
   Priority,
-  type StoredTodo,
 } from './types';
 
 export class ObservableTodoMap {
@@ -42,35 +41,11 @@ export class ObservableTodoMap {
     return result;
   }
 
-  public loadData() {
-    const raw = localStorage.getItem('todoMap');
-    if (raw) {
-      const parsed: StoredTodo[] = JSON.parse(raw);
-      for (const { id, data } of parsed) {
-        this.map.set(
-          id,
-          new Todo(
-            data.id,
-            data.title,
-            data.description,
-            new Date(data.dueDate),
-            data.priority,
-            data.state,
-            data.task,
-          ),
-        );
-      }
+  public loadData(items: [string, Todo][]) {
+    this.map.clear();
+    for (const [id, todo] of items) {
+      this.map.set(id, todo);
     }
-  }
-
-  public saveData() {
-    const serialized = JSON.stringify(
-      Array.from(this.map.entries()).map(([id, todo]) => ({
-        id,
-        data: todo.toJSON(),
-      })),
-    );
-    localStorage.setItem('todoMap', serialized);
   }
 
   public subscribe(listener: TodoMapListener) {
@@ -148,11 +123,11 @@ export class Todo {
     return {
       id: this._id,
       title: this._title,
-      description: this._description,
+      ...(this._description != null ? { description: this._description } : {}),
       dueDate: this._dueDate.toISOString(),
       priority: this._priority,
       state: this._state,
-      task: this._task,
+      ...(this._task != null ? { task: this._task } : {}),
     };
   }
 }

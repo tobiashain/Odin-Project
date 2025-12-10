@@ -10,7 +10,7 @@ export enum State {
   Pending = 'Pending',
   Done = 'Done',
 }
-export type Task = String | ChecklistTask;
+export type Task = string | ChecklistTask;
 export type TodoMapListener = (
   event: TodoMapEvent,
   map: Map<string, Todo>,
@@ -29,17 +29,20 @@ export interface FormValues {
   task?: Task;
 }
 
-export interface StoredTodo {
-  id: string;
-  data: {
+export interface StoredProject {
+  projectId: string;
+  todos: {
     id: string;
-    title: string;
-    description?: string;
-    dueDate: string; // ISO string
-    priority: Priority;
-    state: State;
-    task?: Task;
-  };
+    data: {
+      id: string;
+      title: string;
+      description?: string;
+      dueDate: string;
+      priority: Priority;
+      state: State;
+      task?: Task;
+    };
+  }[];
 }
 
 type Unsubscribe = () => void;

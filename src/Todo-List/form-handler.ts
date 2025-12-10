@@ -8,6 +8,7 @@ export class FormHandler {
   private taskDiv: HTMLElement | null;
   private _dialogForm: HTMLDialogElement | null;
   private closeBtn: HTMLButtonElement | null;
+  private dueDateInput: HTMLInputElement | null;
 
   get dialogForm() {
     return this._dialogForm;
@@ -18,6 +19,7 @@ export class FormHandler {
     this.taskDiv = document.querySelector('#taskDiv');
     this._dialogForm = document.querySelector('dialog');
     this.closeBtn = document.querySelector('#closeBtn');
+    this.dueDateInput = document.querySelector('#dueDate');
 
     this.bindEvents();
   }
@@ -29,6 +31,11 @@ export class FormHandler {
         this._dialogForm!.close();
       });
     }
+
+    if (this.dueDateInput) {
+      this.dueDateInput.min = new Date().toISOString().slice(0, 10);
+    }
+
     this.selectTask();
     this.fetchTask();
   }

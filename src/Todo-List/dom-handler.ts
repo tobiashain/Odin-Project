@@ -1,5 +1,5 @@
 import { FormHandler } from './form-handler';
-import { type Todo } from './todo';
+import type { Todo } from './todo';
 import { todoMap, projectMap, switchTodoMap } from './index';
 import { State, Priority, type TodoMapEvent } from './types';
 

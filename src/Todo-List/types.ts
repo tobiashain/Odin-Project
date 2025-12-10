@@ -1,4 +1,5 @@
-import { type ChecklistTask, type Todo } from './todo';
+import type { ChecklistTask } from './checklist-task';
+import type { Todo } from './todo';
 
 export enum Priority {
   Low = 'Low',

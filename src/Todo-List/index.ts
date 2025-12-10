@@ -1,7 +1,7 @@
 import backButton from '../shared';
-import type { TodoMapEvent, Subscriptions, TodoMapListener } from './types';
-import { ObservableTodoMap, type Todo } from './todo';
-import { ProjectStore } from './project';
+import type { Subscriptions, TodoMapListener } from './types';
+import { ObservableTodoMap } from './observable-todo-map';
+import { ProjectStore } from './project-store';
 import { DOMHandler } from './dom-handler';
 
 export const projectMap = new ProjectStore();
@@ -15,7 +15,7 @@ if (todoMap) {
 
   const saveDataListener: TodoMapListener = (event, map) => {
     if (event.type !== 'bulk' && event.type !== 'clear')
-      projectMap.saveProject(event.id, event.type);
+      projectMap.saveProject(event.id);
     if (event.type === 'clear') projectMap.saveProjects();
   };
   subscriptions.push({

@@ -1,5 +1,6 @@
 import { type FormValues, Priority, State } from './types';
-import { ChecklistTask, Todo } from './todo';
+import { ChecklistTask } from './checklist-task';
+import { Todo } from './todo';
 import { todoMap } from './index';
 
 export class FormHandler {

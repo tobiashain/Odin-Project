@@ -1,4 +1,5 @@
-import { ObservableTodoMap, Todo } from './todo';
+import { ObservableTodoMap } from './observable-todo-map';
+import { Todo } from './todo';
 import { type StoredProject } from './types';
 export class ProjectStore {
   private storageKey: string = 'projects';
@@ -49,7 +50,7 @@ export class ProjectStore {
     return Array.from(this.projectMap.keys());
   }
 
-  public saveProject(todoId: string, type: string) {
+  public saveProject(todoId: string) {
     const projectId = this._currentProjectId;
     if (!projectId) return;
     const todoMap = this.current;
@@ -71,7 +72,7 @@ export class ProjectStore {
 
     if (todoId) {
       const storedProject = parsed[idx];
-      const liveTodo = todoMap.get(todoId);
+      const liveTodo = todoMap.get(todoId); // Check if it got deleted
 
       if (!storedProject) return;
 

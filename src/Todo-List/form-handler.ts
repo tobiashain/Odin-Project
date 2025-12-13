@@ -10,6 +10,7 @@ export class FormHandler {
   private _dialogForm: HTMLDialogElement | null;
   private closeBtn: HTMLButtonElement | null;
   private dueDateInput: HTMLInputElement | null;
+  private listContainer: HTMLElement | null;
 
   get dialogForm() {
     return this._dialogForm;
@@ -21,6 +22,7 @@ export class FormHandler {
     this._dialogForm = document.querySelector('dialog');
     this.closeBtn = document.querySelector('#closeBtn');
     this.dueDateInput = document.querySelector('#dueDate');
+    this.listContainer = document.querySelector('#listContainer');
 
     this.bindEvents();
   }
@@ -96,6 +98,7 @@ export class FormHandler {
         if (this._dialogForm) {
           this._dialogForm.close();
           this.form!.reset();
+          this.listContainer!.innerHTML = '';
         }
       });
     }
@@ -120,8 +123,6 @@ export class FormHandler {
           addButton.type = 'button';
           addButton.textContent = 'Add item';
 
-          const listContainer = document.createElement('div');
-
           addButton.addEventListener('click', () => {
             if (itemInput.value.trim() === '') return;
             const wrapper = document.createElement('div');
@@ -145,13 +146,12 @@ export class FormHandler {
             wrapper.appendChild(label);
             wrapper.appendChild(removeBtn);
 
-            listContainer.appendChild(wrapper);
+            this.listContainer!.appendChild(wrapper);
             itemInput.value = '';
           });
 
           this.taskDiv!.appendChild(itemInput);
           this.taskDiv!.appendChild(addButton);
-          this.taskDiv!.appendChild(listContainer);
         }
       };
 

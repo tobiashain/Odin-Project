@@ -1,7 +1,14 @@
 import { FormHandler } from './form-handler';
-import type { Todo } from './todo';
+import { Todo } from './todo';
 import { todoMap, projectMap, switchTodoMap } from './index';
-import { State, Priority, type TodoMapEvent } from './types';
+import {
+  State,
+  Priority,
+  TodoColor,
+  type TodoMapEvent,
+  type Task,
+} from './types';
+import { ChecklistTask } from './checklist-task';
 
 const formHandler = new FormHandler();
 
@@ -29,7 +36,6 @@ export class DOMHandler {
 
     if (this.projectListDiv) {
       const projects = projectMap.listProjects();
-      this.projectListDiv.innerHTML = '';
       const ul = document.createElement('ul');
       projects.forEach((project) => {
         const li = document.createElement('li');
@@ -112,14 +118,56 @@ export class DOMHandler {
     return input;
   }
 
-  private makeLabel(forId: string, text: string): HTMLLabelElement {
+  private createLabel(forId: string, text: string): HTMLLabelElement {
     const label = document.createElement('label') as HTMLLabelElement;
     label.setAttribute('for', forId);
     label.textContent = text;
     return label;
   }
 
+  private createTask(task: Task, onChange?: (value: Task) => void) {
+    const taskDiv = document.createElement('div') as HTMLDivElement;
+    taskDiv.className = 'todo-task';
+
+    if (typeof task === 'string') {
+      const note = document.createElement('div') as HTMLDivElement;
+      note.innerText = task;
+      note.className = 'todo-note';
+      taskDiv.appendChild(note);
+    } else {
+      console.log(task);
+      const checklist = document.createElement('div') as HTMLDivElement;
+      checklist.className = 'todo-checklist';
+      task.items.forEach((item) => {
+        const wrapper = document.createElement('div') as HTMLDivElement;
+        wrapper.className = 'item';
+        checklist.appendChild(wrapper);
+
+        const checklistItem = document.createElement('span') as HTMLSpanElement;
+        checklistItem.innerText = item[0];
+        wrapper.appendChild(checklistItem);
+
+        const checklistCheck = document.createElement(
+          'input',
+        ) as HTMLInputElement;
+        checklistCheck.type = 'checkbox';
+        checklistCheck.value = item[1] ? 'true' : 'false';
+        wrapper.appendChild(checklistCheck);
+
+        taskDiv.appendChild(checklist);
+      });
+    }
+
+    return taskDiv;
+  }
+
   public renderTodo(todo: Todo): HTMLElement {
+    let todoColor =
+      todo.state === State.NotStarted
+        ? TodoColor.NotStarted
+        : todo.state === State.Pending
+          ? TodoColor.Pending
+          : TodoColor.Done;
     const el = document.createElement('div');
     el.id = todo.id;
     el.className = 'todo';
@@ -129,25 +177,24 @@ export class DOMHandler {
         todoMap!.notify({ type: 'set', id: todo.id, todo });
       }),
     );
-    if (todo.description)
-      el.appendChild(
-        this.createDiv(todo.description, 'todo-desc', (value) => {
-          todo.editTask({ description: value });
-          todoMap!.notify({ type: 'set', id: todo.id, todo });
-        }),
-      );
+
+    el.appendChild(
+      this.createDiv(todo.description ?? '', 'todo-desc', (value) => {
+        todo.editTask({ description: value });
+        todoMap!.notify({ type: 'set', id: todo.id, todo });
+      }),
+    );
 
     const wrapper = document.createElement('div');
     wrapper.className = 'wrapper';
 
-    wrapper.appendChild(this.makeLabel('todo-date', 'Due'));
-    wrapper.appendChild(this.makeLabel('todo-priority', 'Priority'));
-    wrapper.appendChild(this.makeLabel('todo-state', 'Progress'));
+    wrapper.appendChild(this.createLabel('todo-date', 'Due'));
+    wrapper.appendChild(this.createLabel('todo-priority', 'Priority'));
+    wrapper.appendChild(this.createLabel('todo-state', 'Progress'));
 
     el.appendChild(wrapper);
 
     const dateInput = this.createDateInput(todo.dueDate, (date) => {
-      console.log(date);
       if (!date) {
         todo.editTask({ dueDate: new Date() });
       } else {
@@ -163,9 +210,11 @@ export class DOMHandler {
 
     if (
       todo.dueDate.toISOString().slice(0, 10) <
-      new Date().toISOString().slice(0, 10)
+        new Date().toISOString().slice(0, 10) &&
+      todo.state !== State.Done
     ) {
       dateInput.className = 'todo-date overdue';
+      todoColor = TodoColor.Overdue;
     } else {
       dateInput.className = 'todo-date';
     }
@@ -193,32 +242,40 @@ export class DOMHandler {
     state.className = 'todo-state';
     wrapper.appendChild(state);
 
+    const task = this.createTask(todo.task ?? '', (value) => {
+      todo.editTask({});
+      todoMap!.notify({ type: 'set', id: todo.id, todo });
+    });
+    el.appendChild(task);
+    el.style.borderLeft = `15px solid ${todoColor}`;
     return el;
   }
 
   public updateTodoRow(row: HTMLElement, todo: Todo): void {
+    let todoColor =
+      todo.state === State.NotStarted
+        ? TodoColor.NotStarted
+        : todo.state === State.Pending
+          ? TodoColor.Pending
+          : TodoColor.Done;
+
     const title = row.querySelector('.todo-title');
     if (title) title.textContent = todo.title;
 
     const desc = row.querySelector('.todo-desc');
     if (desc) {
-      if (todo.description) {
-        desc.textContent = todo.description;
-      } else {
-        desc.remove();
-      }
-    } else if (todo.description) {
-      const newDesc = this.createDiv(todo.description, 'todo-desc');
-      row.insertBefore(newDesc, row.querySelector('.todo-date'));
+      desc.textContent = todo.description ?? '';
     }
 
     const dateInput = row.querySelector('.todo-date') as HTMLInputElement;
     if (dateInput) {
       if (
         todo.dueDate.toISOString().slice(0, 10) <
-        new Date().toISOString().slice(0, 10)
+          new Date().toISOString().slice(0, 10) &&
+        todo.state !== State.Done
       ) {
         dateInput.className = 'todo-date overdue';
+        todoColor = TodoColor.Overdue;
       } else {
         dateInput.className = 'todo-date';
       }
@@ -234,6 +291,8 @@ export class DOMHandler {
     if (state) {
       state.value = todo.state;
     }
+
+    row.style.borderLeft = `15px solid ${todoColor}`;
   }
 
   public handleTodoMapEvent(event: TodoMapEvent) {

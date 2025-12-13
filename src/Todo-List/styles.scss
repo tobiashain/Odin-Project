@@ -1,3 +1,6 @@
+$project-list: #3a3a55;
+$settings: #414380;
+
 * {
   padding: 0;
   margin: 0;
@@ -15,14 +18,35 @@ body {
 
 aside {
   width: 20svw;
-  background-color: aquamarine;
+  background-color: $project-list;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+
+  .logo {
+    height: 20svh;
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+
+    li {
+      list-style: none;
+      width: 100%;
+      text-align: center;
+
+      &:hover {
+      }
+    }
+  }
 }
 main {
   width: 80svw;
 }
 .settings {
   height: 20svh;
-  background-color: aqua;
+  background-color: $settings;
 }
 
 dialog {
@@ -48,7 +72,7 @@ dialog {
     flex-direction: column;
     background-color: white;
     border-radius: 10px;
-    border-left: 15px solid orange;
+    border-left: 15px solid transparent;
     padding: 15px;
     transition: background-color 0.2s;
 
@@ -89,6 +113,10 @@ dialog {
     }
     .overdue {
       color: red;
+    }
+
+    .todo-task {
+      overflow: auto;
     }
   }
 

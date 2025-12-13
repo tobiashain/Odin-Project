@@ -13,7 +13,9 @@ export class ProjectStore {
       this.selectProject('default');
       return;
     }
-    this.addProject('Dings');
+    this.addProject('Arbeit');
+    this.addProject('Schule');
+    this.addProject('Freizeit');
   }
 
   get current(): ObservableTodoMap | undefined {

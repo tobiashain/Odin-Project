@@ -37,9 +37,8 @@
             <option value="checklist">Checklist</option>
           </select>
         </div>
-        <div class="item" id="taskDiv">
-          <input type="text" placeholder="Enter your note" />
-        </div>
+        <div class="item" id="taskDiv"></div>
+        <div id="listContainer"></div>
         <div class="item">
           <button id="submitBtn" type="submit">Submit</button>
           <button id="closeBtn" type="button">Close</button>
@@ -47,7 +46,9 @@
       </form>
     </dialog>
     <div class="content">
-      <aside id="projectList"></aside>
+      <aside id="projectList">
+        <div class="logo"></div>
+      </aside>
       <main>
         <div class="settings"></div>
         <div class="container">

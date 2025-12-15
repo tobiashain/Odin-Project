@@ -118,6 +118,15 @@ dialog {
     .todo-task {
       overflow: auto;
     }
+
+    .todo-checklist {
+      width: fit-content;
+      margin: 10px 10px 10px 0px;
+      .item {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
   }
 
   #addTodo {

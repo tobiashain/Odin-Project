@@ -130,32 +130,43 @@ export class DOMHandler {
     taskDiv.className = 'todo-task';
 
     if (typeof task === 'string') {
-      const note = document.createElement('div') as HTMLDivElement;
+      const note = document.createElement('textarea') as HTMLTextAreaElement;
       note.innerText = task;
       note.className = 'todo-note';
       taskDiv.appendChild(note);
+
+      if (onChange) {
+        note.addEventListener('change', () => {
+          onChange(note.value);
+        });
+      }
     } else {
-      console.log(task);
       const checklist = document.createElement('div') as HTMLDivElement;
       checklist.className = 'todo-checklist';
-      task.items.forEach((item) => {
+
+      const items: [string, boolean][] = task.items.map(([l, v]) => [l, v]);
+      items.forEach(([label, checked], index) => {
         const wrapper = document.createElement('div') as HTMLDivElement;
         wrapper.className = 'item';
+
+        const text = document.createElement('span') as HTMLSpanElement;
+        text.innerText = label;
+
+        const checkbox = document.createElement('input') as HTMLInputElement;
+        checkbox.type = 'checkbox';
+        checkbox.checked = checked;
+
+        if (onChange) {
+          checkbox.addEventListener('change', () => {
+            items[index]![1] = checkbox.checked;
+            onChange(new ChecklistTask([...items]));
+          });
+        }
+        wrapper.appendChild(text);
+        wrapper.appendChild(checkbox);
         checklist.appendChild(wrapper);
-
-        const checklistItem = document.createElement('span') as HTMLSpanElement;
-        checklistItem.innerText = item[0];
-        wrapper.appendChild(checklistItem);
-
-        const checklistCheck = document.createElement(
-          'input',
-        ) as HTMLInputElement;
-        checklistCheck.type = 'checkbox';
-        checklistCheck.value = item[1] ? 'true' : 'false';
-        wrapper.appendChild(checklistCheck);
-
-        taskDiv.appendChild(checklist);
       });
+      taskDiv.appendChild(checklist);
     }
 
     return taskDiv;
@@ -243,7 +254,7 @@ export class DOMHandler {
     wrapper.appendChild(state);
 
     const task = this.createTask(todo.task ?? '', (value) => {
-      todo.editTask({});
+      todo.editTask({ task: value as Task });
       todoMap!.notify({ type: 'set', id: todo.id, todo });
     });
     el.appendChild(task);

@@ -12,11 +12,17 @@ export enum State {
   Done = 'Done',
 }
 
-export enum TodoColor {
+export enum TodoStateColor {
   NotStarted = '#afaee5',
   Pending = '#e68b00',
   Done = '#00e65f',
   Overdue = '#e60f01',
+}
+
+export enum TodoPriorityColor {
+  Low = '#ffffffff',
+  Medium = '#ffdfa0ff',
+  High = '#ffc6c6ff',
 }
 export type Task = string | ChecklistTask;
 export type TodoMapListener = (

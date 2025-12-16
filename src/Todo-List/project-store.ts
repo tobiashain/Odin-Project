@@ -13,9 +13,7 @@ export class ProjectStore {
       this.selectProject('default');
       return;
     }
-    this.addProject('Arbeit');
-    this.addProject('Schule');
-    this.addProject('Freizeit');
+    this.addProject('Lorem Ipsum dolores benomenano de lisusison');
   }
 
   get current(): ObservableTodoMap | undefined {

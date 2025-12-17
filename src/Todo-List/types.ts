@@ -24,6 +24,7 @@ export enum TodoPriorityColor {
   Medium = '#ffdfa0ff',
   High = '#ffc6c6ff',
 }
+
 export type Task = string | ChecklistTask;
 export type TodoMapListener = (
   event: TodoMapEvent,

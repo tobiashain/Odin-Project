@@ -8,12 +8,6 @@ export class ProjectStore {
 
   constructor() {
     this.loadProjects();
-    if (this.projectMap.size === 0) {
-      this.addProject('default');
-      this.selectProject('default');
-      return;
-    }
-    this.addProject('Lorem Ipsum dolores benomenano de lisusison');
   }
 
   get current(): ObservableTodoMap | undefined {
@@ -25,6 +19,8 @@ export class ProjectStore {
   public addProject(projectId: string) {
     if (!this.projectMap.has(projectId)) {
       this.projectMap.set(projectId, new ObservableTodoMap());
+      this._currentProjectId = projectId;
+      this.saveProject(projectId);
       return;
     }
     alert('Project already exists!');
@@ -35,6 +31,24 @@ export class ProjectStore {
       if (this._currentProjectId === projectId)
         this._currentProjectId = this.projectMap.keys().next().value ?? null;
     }
+    this.saveProjects();
+  }
+
+  public renameProject(name: string, newName: string) {
+    if (!this.projectMap.has(name) || this.projectMap.has(newName)) return;
+
+    const newMap = new Map<string, ObservableTodoMap>();
+
+    for (const [key, value] of this.projectMap) {
+      if (key === name) {
+        newMap.set(newName, value);
+      } else {
+        newMap.set(key, value);
+      }
+    }
+
+    this.projectMap = newMap;
+    this.saveProjects();
   }
 
   public selectProject(projectId: string): ObservableTodoMap | undefined {
@@ -133,5 +147,7 @@ export class ProjectStore {
       this.projectMap.set(projectId, todoMap);
       this._currentProjectId = projectId;
     }
+
+    if (parsed[0]?.projectId) this._currentProjectId = parsed[0].projectId;
   }
 }

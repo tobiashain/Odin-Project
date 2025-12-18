@@ -55,8 +55,32 @@
       </aside>
       <main>
         <div class="settings">
-          <div class="settingsTitle"></div>
-          <div class="settingsoptions"></div>
+          <div id="settingsTitle"></div>
+          <div id="settingsOptions">
+            <label for="filterTask">Task</label>
+            <label for="filterDate">Date</label>
+            <label for="filterPriority">Priority</label>
+            <label for="filterState">State</label>
+            <select name="filterTask" id="filterTask">
+              <option value="">All</option>
+              <option value="">Note</option>
+              <option value="">Checklist</option>
+            </select>
+            <input name="filterDate" id="filterDate" type="date" />
+            <select name="filterPriority" id="filterPriority">
+              <option value="">All</option>
+              <option value="">Low</option>
+              <option value="">Medium</option>
+              <option value="">High</option>
+            </select>
+            <select name="filterState" id="filterState">
+              <option value="">All</option>
+              <option value="">Not Started</option>
+              <option value="">Pending</option>
+              <option value="">Overdue</option>
+              <option value="">Done</option>
+            </select>
+          </div>
         </div>
         <div class="container">
           <div id="addTodo">
@@ -82,6 +106,7 @@
             </div>
             <div class="text">Create New Todo</div>
           </div>
+          <div id="selectProject">No project is currently selected!</div>
         </div>
       </main>
     </div>

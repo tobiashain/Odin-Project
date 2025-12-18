@@ -9,12 +9,20 @@ export class ProjectStore {
 
   constructor() {
     this.loadProjects();
+    if (this.projectMap.size === 0) {
+      this.addProject('New Project');
+      this.selectProject('New Project');
+    }
   }
 
   get current(): ObservableTodoMap | undefined {
     return this._currentProjectId
       ? this.projectMap.get(this._currentProjectId)
       : undefined;
+  }
+
+  get projectId(): string | null {
+    return this._currentProjectId;
   }
 
   public addProject(projectId: string) {

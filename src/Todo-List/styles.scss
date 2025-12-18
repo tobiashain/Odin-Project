@@ -29,6 +29,7 @@ body {
   }
 
   textarea {
+    font-family: inherit;
     resize: none;
     overflow-y: hidden;
     height: auto;
@@ -106,7 +107,7 @@ aside {
       transition: background-color 0.2s;
 
       &:hover {
-        background-color: var(--primary-hover);
+        background-color: var(--primary-hover) !important;
       }
 
       &:focus {
@@ -133,6 +134,22 @@ main {
 .settings {
   height: 20svh;
   background-color: var(--primary);
+  padding: 20px;
+  box-sizing: border-box;
+
+  #settingsTitle {
+    color: white;
+    font-size: 2rem;
+    display: flex;
+    margin-bottom: auto;
+    height: 50%;
+  }
+
+  #settingsOptions {
+    height: 50%;
+    display: grid;
+    grid-template: 1fr 1fr / 1fr 1fr 1fr 1fr;
+  }
 }
 
 dialog {
@@ -206,12 +223,17 @@ dialog {
     .todo-title,
     .todo-desc,
     .todo-date,
+    .todo-note,
     select.todo-priority,
     select.todo-state {
       transition: background-color 0.3s;
       &:hover {
         background-color: #00000038;
       }
+    }
+
+    .todo-note {
+      width: 100%;
     }
 
     select option {

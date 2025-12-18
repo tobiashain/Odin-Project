@@ -25,6 +25,7 @@ if (todoMap) {
 
   const loggingListener: TodoMapListener = (event, map) => {
     console.log(map);
+    console.log(projectMap);
   };
   subscriptions.push({
     listener: loggingListener,
@@ -41,11 +42,25 @@ if (todoMap) {
 }
 
 export function switchTodoMap(map: ObservableTodoMap | undefined) {
-  if (map && todoMap !== map) {
+  if (todoMap !== map) {
     subscriptions.forEach(({ unsubscribe }) => unsubscribe());
     todoMap = map;
-    subscriptions.forEach((sub) => {
-      sub.unsubscribe = todoMap!.subscribe(sub.listener);
-    });
+    if (todoMap) {
+      subscriptions.forEach((sub) => {
+        sub.unsubscribe = todoMap!.subscribe(sub.listener);
+      });
+    } else {
+      domHandler.handleTodoMapEvent({ type: 'clear' });
+    }
   }
+}
+
+export function getElement<T extends HTMLElement = HTMLElement>(
+  selector: string,
+): T {
+  const el = document.querySelector(selector);
+  if (!el) {
+    throw new Error(`Missing required element: ${selector}`);
+  }
+  return el as T;
 }

@@ -1,6 +1,6 @@
 import { FormHandler } from './form-handler';
 import { Todo } from './todo';
-import { todoMap, projectMap, switchTodoMap } from './index';
+import { todoMap, projectMap, switchTodoMap, getElement } from './index';
 import {
   State,
   Priority,
@@ -14,26 +14,33 @@ import { ChecklistTask } from './checklist-task';
 const formHandler = new FormHandler();
 
 export class DOMHandler {
-  private containerDiv: HTMLElement | null;
-  private addTodoDiv: HTMLElement | null;
-  private projectListDiv: HTMLElement | null;
-  private addProject: HTMLButtonElement | null;
+  private containerDiv: HTMLElement;
+  private addTodoDiv: HTMLElement;
+  private selectProject: HTMLElement;
+  private projectListDiv: HTMLElement;
+  private addProject: HTMLButtonElement;
+  private settingsTitle: HTMLElement;
   private nodes = new Map<string, HTMLElement>();
 
   constructor() {
-    this.containerDiv = document.querySelector('.container');
-    this.addTodoDiv = document.querySelector('#addTodo');
-    this.projectListDiv = document.querySelector('#projectList');
-    this.addProject = document.querySelector('#addProject');
+    this.containerDiv = getElement('.container');
+    this.addTodoDiv = getElement('#addTodo');
+    this.selectProject = getElement('#selectProject');
+    this.projectListDiv = getElement('#projectList');
+    this.addProject = getElement<HTMLButtonElement>('#addProject');
+    this.settingsTitle = getElement('#settingsTitle');
+
     this.bindEvents();
   }
 
   private bindEvents() {
-    this.addTodoDiv?.addEventListener('click', () => {
+    this.addTodoDiv.addEventListener('click', () => {
       if (formHandler.dialogForm) {
         formHandler.dialogForm.showModal();
       }
     });
+
+    this.settingsTitle.innerText = projectMap.projectId ?? '';
 
     this.addProject?.addEventListener('click', () => {
       let counter = 0;
@@ -59,7 +66,15 @@ export class DOMHandler {
 
   public handleTodoMapEvent(event: TodoMapEvent) {
     const container = this.containerDiv;
-    if (!container) return;
+
+    if (event.type === 'clear') {
+      this.addTodoDiv.style.display = 'none';
+      this.selectProject.style.display = 'block';
+    } else {
+      this.addTodoDiv.style.display = 'flex';
+      this.selectProject.style.display = 'none';
+      this.settingsTitle!.innerText = projectMap.projectId ?? '';
+    }
 
     switch (event.type) {
       case 'bulk':
@@ -106,8 +121,6 @@ export class DOMHandler {
   }
 
   private projectList() {
-    if (!this.projectListDiv) return;
-
     const projects = projectMap.listProjects();
     this.projectListDiv.innerHTML = '';
     projects.forEach((project) => {
@@ -116,8 +129,6 @@ export class DOMHandler {
   }
 
   private createProject(project: string) {
-    if (!this.projectListDiv) return;
-
     const textarea = document.createElement('textarea');
     textarea.readOnly = true;
     textarea.className = 'project';
@@ -152,6 +163,7 @@ export class DOMHandler {
       const input = event.target as HTMLInputElement;
       if (input.readOnly) {
         switchTodoMap(projectMap.selectProject(currentName));
+        this.settingsTitle.innerText = projectMap.projectId ?? '';
       }
     });
 
@@ -162,7 +174,7 @@ export class DOMHandler {
         return;
       } else if (textarea.value.trim() === currentName) {
         textarea.style.caretColor = 'transparent';
-        textarea.style.background = 'none';
+        textarea.style.background = 'initial';
         textarea.readOnly = true;
         textarea.value = textarea.value.trim();
         this.adjustHeight(textarea);
@@ -177,14 +189,15 @@ export class DOMHandler {
         textarea.focus();
         return;
       }
-      console.log('ping');
       textarea.style.caretColor = 'transparent';
-      textarea.style.background = 'none';
+      textarea.style.background = 'transparent';
       textarea.readOnly = true;
       textarea.value = textarea.value.trim();
       this.adjustHeight(textarea);
 
       projectMap.renameProject(currentName, textarea.value);
+      if (this.settingsTitle.innerText === currentName)
+        this.settingsTitle.innerText = textarea.value;
       currentName = textarea.value;
     });
 
@@ -197,6 +210,7 @@ export class DOMHandler {
 
     btnDelete.addEventListener('click', () => {
       projectMap.deleteProject(project);
+      this.settingsTitle.innerText = projectMap.projectId ?? '';
       this.projectList();
     });
 
@@ -363,7 +377,16 @@ export class DOMHandler {
     if (typeof task === 'string') {
       const note = document.createElement('textarea');
       note.innerText = task;
+      note.rows = 1;
       note.className = 'todo-note';
+      setTimeout(() => {
+        this.adjustHeight(note);
+      }, 0);
+
+      note.addEventListener('input', () => {
+        this.adjustHeight(note);
+      });
+
       taskDiv.appendChild(note);
 
       if (onChange) {

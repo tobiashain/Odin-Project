@@ -1,0 +1,46 @@
+:root {
+  --primary: #3a3a55;
+  --primary-hover: #5a5a85;
+  --logo: #2c2c4e;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.content {
+  width: 100%;
+  height: 100svh;
+  display: flex;
+
+  input,
+  select,
+  textarea {
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 0 5px;
+  }
+
+  textarea {
+    font-family: inherit;
+    resize: none;
+    overflow-y: hidden;
+    height: auto;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+    line-height: 1.5em;
+    max-height: 6em;
+    min-height: 1.5em;
+  }
+}
+
+main {
+  width: 80svw;
+}

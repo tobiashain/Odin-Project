@@ -22,7 +22,7 @@ import { ChecklistTask } from './checklist-task';
 const formHandler = new FormHandler();
 
 export class TodoHandler {
-  private containerDiv: HTMLElement;
+  private todosContainer: HTMLElement;
   private addTodoDiv: HTMLElement;
   private selectProject: HTMLElement;
   private filterInput: FilterInput;
@@ -30,7 +30,7 @@ export class TodoHandler {
   private nodes = new Map<string, HTMLElement>();
 
   constructor() {
-    this.containerDiv = getElement('.container');
+    this.todosContainer = getElement('#todosContainer');
     this.addTodoDiv = getElement('#addTodo');
     this.selectProject = getElement('#selectProject');
     this.filterInput = {
@@ -58,7 +58,7 @@ export class TodoHandler {
   }
 
   public handleTodoMapEvent(event: TodoMapEvent) {
-    const container = this.containerDiv;
+    const container = this.todosContainer;
 
     if (event.type === 'clear') {
       this.addTodoDiv.style.display = 'none';

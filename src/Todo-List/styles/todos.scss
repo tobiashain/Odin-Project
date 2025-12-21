@@ -1,0 +1,115 @@
+#todosContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(370px, 1fr));
+  grid-auto-rows: 300px;
+  gap: 20px;
+  background-color: rgb(235, 235, 235);
+  height: 80svh;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: scroll;
+
+  .todo {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 10px;
+    border-left: 15px solid transparent;
+    padding: 15px;
+    transition:
+      background-color 0.2s,
+      border-left 0.3s;
+
+    &:hover {
+      background-color: whitesmoke;
+    }
+
+    .todo-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .wrapper {
+      display: grid;
+      grid-template: 1fr 1fr / 1fr 1fr 1fr;
+      column-gap: 20px;
+    }
+
+    .overdue {
+      color: red;
+      font-weight: 900;
+    }
+
+    .todo-task {
+      overflow: auto;
+      padding: 5px;
+    }
+
+    .todo-checklist {
+      width: fit-content;
+      margin: 10px 10px 10px 0px;
+      .item {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+
+    label {
+      padding: 0 5px;
+    }
+
+    .todo-title,
+    .todo-desc,
+    .todo-date,
+    .todo-note,
+    select.todo-priority,
+    select.todo-state {
+      transition: background-color 0.3s;
+      &:hover {
+        background-color: #00000038;
+      }
+    }
+
+    .todo-note {
+      width: 100%;
+    }
+
+    select option {
+      background-color: white;
+    }
+  }
+
+  #addTodo {
+    position: relative;
+    border: 3px dashed grey;
+    color: grey;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+      border: 3px dashed black;
+      background-color: whitesmoke;
+      color: black;
+    }
+
+    .plus {
+      aspect-ratio: 1/1;
+      height: 50%;
+    }
+
+    .text {
+      position: absolute;
+      font-size: 1.2rem;
+      bottom: 40px;
+    }
+
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+  }
+}

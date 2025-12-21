@@ -2,12 +2,15 @@ import backButton from '../shared';
 import type { Subscriptions, TodoMapListener } from './types';
 import { ObservableTodoMap } from './observable-todo-map';
 import { ProjectStore } from './project-store';
-import { DOMHandler } from './dom-handler';
+import { TodoHandler } from './todo-handler';
+import { ProjectListHandler } from './project-list-handler';
 
 export const projectMap = new ProjectStore();
 export let todoMap = projectMap.current;
+export const projectListHandler = new ProjectListHandler();
 
-const domHandler = new DOMHandler();
+const domHandler = new TodoHandler();
+
 const subscriptions: Subscriptions[] = [];
 
 if (todoMap) {
@@ -63,4 +66,15 @@ export function getElement<T extends HTMLElement = HTMLElement>(
     throw new Error(`Missing required element: ${selector}`);
   }
   return el as T;
+}
+
+export function adjustHeight(input: HTMLTextAreaElement) {
+  input.style.height = 'auto';
+  input.style.height = input.scrollHeight + 'px';
+
+  if (input.scrollHeight > parseInt(getComputedStyle(input).maxHeight)) {
+    input.style.overflowY = 'auto';
+  } else {
+    input.style.overflowY = 'hidden';
+  }
 }

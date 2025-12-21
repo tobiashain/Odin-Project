@@ -29,8 +29,7 @@ export class FormHandler {
 
   private bindEvents() {
     this.closeBtn.addEventListener('click', () => {
-      this.form!.reset();
-      this._dialogForm!.close();
+      this.closeForm();
     });
 
     this.dueDateInput.min = new Date().toISOString().slice(0, 10);
@@ -90,9 +89,8 @@ export class FormHandler {
         formData.task,
       );
       todoMap!.set(id, todo);
-      this._dialogForm.close();
-      this.form!.reset();
-      this.listContainer!.innerHTML = '';
+
+      this.closeForm();
     });
   }
 
@@ -152,5 +150,13 @@ export class FormHandler {
     });
 
     renderTaskControls(this.selectTaskElement.value);
+  }
+
+  private closeForm() {
+    this._dialogForm.close();
+    this.form.reset();
+    this.selectTaskElement.value = 'notes';
+    this.selectTask();
+    this.listContainer.innerHTML = '';
   }
 }

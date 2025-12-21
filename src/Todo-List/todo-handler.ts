@@ -304,7 +304,7 @@ export class TodoHandler {
     if (dateValue !== null && dateValue !== undefined && dateValue !== '') {
       filteredTodo = todoMap!.filter(
         (filteredTodo) =>
-          filteredTodo.dueDate.toISOString().slice(0, 10) <
+          filteredTodo.dueDate.toISOString().slice(0, 10) <=
           this.filterInput.date.value,
       );
     }
@@ -321,6 +321,7 @@ export class TodoHandler {
         (filteredTodo) => filteredTodo.state === this.filterInput.state.value,
       );
     }
+    console.log(filteredTodo);
 
     this.handleTodoMapEvent({
       type: 'filter',

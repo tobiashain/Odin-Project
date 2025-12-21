@@ -17,8 +17,14 @@
     display: grid;
     grid-template: 1fr 1fr / 1fr 1fr 1fr 1fr;
 
-    > * {
+    select,
+    input,
+    label {
       color: white;
+    }
+
+    option {
+      color: black;
     }
   }
 }

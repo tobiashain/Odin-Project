@@ -34,7 +34,8 @@ export type TodoMapEvent =
   | { type: 'set'; id: string; todo: Todo }
   | { type: 'delete'; id: string }
   | { type: 'clear' }
-  | { type: 'bulk'; items: [string, Todo][] };
+  | { type: 'bulk'; items: [string, Todo][] }
+  | { type: 'filter'; items: [string, Todo][] };
 
 export interface FormValues {
   title: string;
@@ -65,4 +66,11 @@ type Unsubscribe = () => void;
 export interface Subscriptions {
   listener: TodoMapListener;
   unsubscribe: Unsubscribe;
+}
+
+export interface FilterInput {
+  task: HTMLSelectElement;
+  date: HTMLInputElement;
+  priority: HTMLSelectElement;
+  state: HTMLSelectElement;
 }

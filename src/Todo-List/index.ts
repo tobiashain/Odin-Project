@@ -17,7 +17,11 @@ if (todoMap) {
   console.log(projectMap);
 
   const saveDataListener: TodoMapListener = (event, map) => {
-    if (event.type !== 'bulk' && event.type !== 'clear')
+    if (
+      event.type !== 'bulk' &&
+      event.type !== 'clear' &&
+      event.type !== 'filter'
+    )
       projectMap.saveProject(event.id);
     if (event.type === 'clear') projectMap.saveProjects();
   };

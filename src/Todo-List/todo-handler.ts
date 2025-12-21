@@ -49,6 +49,12 @@ export class TodoHandler {
         formHandler.dialogForm.showModal();
       }
     });
+
+    for (const [key, element] of Object.entries(this.filterInput)) {
+      element.addEventListener('change', () => {
+        this.filterTodo();
+      });
+    }
   }
 
   public handleTodoMapEvent(event: TodoMapEvent) {
@@ -68,6 +74,10 @@ export class TodoHandler {
         for (const el of this.nodes.values()) {
           el.remove();
         }
+        this.filterInput.task.value = 'All';
+        this.filterInput.date.value = '';
+        this.filterInput.priority.value = 'All';
+        this.filterInput.state.value = 'All';
         this.nodes.clear();
         for (const [id, todo] of event.items) {
           const el = this.renderTodo(todo);
@@ -86,6 +96,7 @@ export class TodoHandler {
           container.appendChild(el);
           this.nodes.set(todo.id, el);
         }
+        this.filterTodo();
         break;
       }
 
@@ -103,6 +114,18 @@ export class TodoHandler {
           el.remove();
         }
         this.nodes.clear();
+        break;
+
+      case 'filter':
+        for (const el of this.nodes.values()) {
+          el.remove();
+        }
+        this.nodes.clear();
+        for (const [id, todo] of event.items) {
+          const el = this.renderTodo(todo);
+          container.appendChild(el);
+          this.nodes.set(id, el);
+        }
         break;
     }
   }
@@ -256,6 +279,53 @@ export class TodoHandler {
 
     row.style.background = todoPriorityColor;
     row.style.borderLeft = `15px solid ${todoColor}`;
+  }
+
+  private filterTodo() {
+    const todo = projectMap.current;
+    if (!todo) return;
+    const todoIterator = todo.entries();
+
+    let filteredTodo = new Map(todoIterator);
+
+    if (this.filterInput.task.value !== 'All') {
+      filteredTodo = todoMap!.filter((filteredTodo) => {
+        if (this.filterInput.task.value === 'note') {
+          return typeof filteredTodo.task === 'string';
+        }
+        if (this.filterInput.task.value === 'checklist') {
+          return typeof filteredTodo.task === 'object';
+        }
+        return true;
+      });
+    }
+
+    const dateValue = this.filterInput.date.value;
+    if (dateValue !== null && dateValue !== undefined && dateValue !== '') {
+      filteredTodo = todoMap!.filter(
+        (filteredTodo) =>
+          filteredTodo.dueDate.toISOString().slice(0, 10) <
+          this.filterInput.date.value,
+      );
+    }
+
+    if (this.filterInput.priority.value !== 'All') {
+      filteredTodo = todoMap!.filter(
+        (filteredTodo) =>
+          filteredTodo.priority === this.filterInput.priority.value,
+      );
+    }
+
+    if (this.filterInput.state.value !== 'All') {
+      filteredTodo = todoMap!.filter(
+        (filteredTodo) => filteredTodo.state === this.filterInput.state.value,
+      );
+    }
+
+    this.handleTodoMapEvent({
+      type: 'filter',
+      items: Array.from(filteredTodo),
+    });
   }
 
   private createTask(task: Task, onChange?: (value: Task) => void) {

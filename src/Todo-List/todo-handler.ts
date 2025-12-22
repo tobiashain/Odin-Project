@@ -74,7 +74,7 @@ export class TodoHandler {
     }
 
     switch (event.type) {
-      case 'bulk':
+      case 'bulk': {
         for (const el of this.nodes.values()) {
           el.remove();
         }
@@ -89,18 +89,22 @@ export class TodoHandler {
           this.nodes.set(id, el);
         }
         break;
+      }
 
       case 'set': {
         const todo = event.todo;
-        const existing = this.nodes.get(todo.id);
-        if (existing) {
-          this.updateTodoRow(existing, todo);
-        } else {
-          const el = this.renderTodo(todo);
-          container.appendChild(el);
+        let el = this.nodes.get(todo.id);
+
+        if (!el) {
+          el = this.renderTodo(todo);
+          this.todosContainer.appendChild(el);
           this.nodes.set(todo.id, el);
+        } else {
+          this.updateTodoRow(el, todo);
         }
-        this.filterTodo();
+
+        el.hidden = !this.matchesFilter(todo);
+
         break;
       }
 
@@ -113,24 +117,23 @@ export class TodoHandler {
         break;
       }
 
-      case 'clear':
+      case 'clear': {
         for (const el of this.nodes.values()) {
           el.remove();
         }
         this.nodes.clear();
         break;
+      }
 
-      case 'filter':
-        for (const el of this.nodes.values()) {
-          el.remove();
+      case 'filter': {
+        const visibleIds = new Set(event.items.map(([id]) => id));
+
+        for (const [id, el] of this.nodes) {
+          el.hidden = !visibleIds.has(id);
         }
-        this.nodes.clear();
-        for (const [id, todo] of event.items) {
-          const el = this.renderTodo(todo);
-          container.appendChild(el);
-          this.nodes.set(id, el);
-        }
+
         break;
+      }
     }
   }
 
@@ -333,6 +336,39 @@ export class TodoHandler {
       type: 'filter',
       items: Array.from(filteredTodo),
     });
+  }
+
+  private matchesFilter(todo: Todo): boolean {
+    if (this.filterInput.task.value !== 'All') {
+      if (
+        this.filterInput.task.value === 'note' &&
+        typeof todo.task !== 'string'
+      )
+        return false;
+
+      if (
+        this.filterInput.task.value === 'checklist' &&
+        typeof todo.task !== 'object'
+      )
+        return false;
+    }
+
+    if (this.filterInput.date.value) {
+      if (
+        todo.dueDate.toISOString().slice(0, 10) >= this.filterInput.date.value
+      )
+        return false;
+    }
+
+    if (this.filterInput.priority.value !== 'All') {
+      if (todo.priority !== this.filterInput.priority.value) return false;
+    }
+
+    if (this.filterInput.state.value !== 'All') {
+      if (todo.state !== this.filterInput.state.value) return false;
+    }
+
+    return true;
   }
 
   private createTask(task: Task, onChange?: (value: Task) => void) {

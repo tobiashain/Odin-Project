@@ -17,8 +17,9 @@ aside {
     background-color: var(--logo);
 
     img {
-      height: 100%;
-      margin-bottom: 20px;
+      height: 10svh;
+      margin-bottom: 10px;
+      box-sizing: border-box;
     }
 
     #addProject {

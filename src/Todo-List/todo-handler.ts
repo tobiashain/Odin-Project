@@ -50,6 +50,10 @@ export class TodoHandler {
       }
     });
 
+    this.filterInput.date.addEventListener('click', () => {
+      this.filterInput.date.showPicker();
+    });
+
     for (const [key, element] of Object.entries(this.filterInput)) {
       element.addEventListener('change', () => {
         this.filterTodo();
@@ -277,8 +281,10 @@ export class TodoHandler {
       state.value = todo.state;
     }
 
-    row.style.background = todoPriorityColor;
-    row.style.borderLeft = `15px solid ${todoColor}`;
+    requestAnimationFrame(() => {
+      row.style.backgroundColor = todoPriorityColor;
+      row.style.borderLeftColor = todoColor;
+    });
   }
 
   private filterTodo() {

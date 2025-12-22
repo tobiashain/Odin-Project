@@ -16,6 +16,7 @@
     height: 50%;
     display: grid;
     grid-template: 1fr 1fr / 1fr 1fr 1fr 1fr;
+    gap: 20px;
 
     select,
     input,
@@ -23,8 +24,17 @@
       color: white;
     }
 
-    option {
+    select,
+    input {
+      transition: background-color 0.3s;
+      &:hover {
+        background-color: var(--primary-hover);
+      }
+    }
+
+    select option {
       color: black;
+      background-color: white;
     }
   }
 }

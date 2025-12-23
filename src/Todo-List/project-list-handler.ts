@@ -52,6 +52,9 @@ export class ProjectListHandler {
   }
 
   private createProject(project: string) {
+    const el = document.createElement('div');
+    el.className = 'item';
+
     const textarea = document.createElement('textarea');
     textarea.readOnly = true;
     textarea.className = 'project';
@@ -137,8 +140,9 @@ export class ProjectListHandler {
       this.projectList();
     });
 
-    this.projectListDiv.appendChild(textarea);
-    this.projectListDiv.appendChild(btnEdit);
-    this.projectListDiv.appendChild(btnDelete);
+    el.appendChild(textarea);
+    el.appendChild(btnEdit);
+    el.appendChild(btnDelete);
+    this.projectListDiv.appendChild(el);
   }
 }

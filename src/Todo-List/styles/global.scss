@@ -1,5 +1,6 @@
 :root {
   --primary: #3a3a55;
+  --secondary: #27273a;
   --primary-hover: #5a5a85;
   --logo: #2c2c4e;
 }
@@ -35,9 +36,9 @@ body {
     height: auto;
     box-sizing: border-box;
     overflow-wrap: break-word;
-    line-height: 1.5em;
     max-height: 6em;
-    min-height: 1.5em;
+    line-height: 1.5em;
+    min-height: 1em;
   }
 }
 

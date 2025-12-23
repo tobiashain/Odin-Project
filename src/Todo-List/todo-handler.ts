@@ -388,11 +388,16 @@ export class TodoHandler {
         adjustHeight(note);
       });
 
+      note.addEventListener('blur', () => {
+        note.value = note.value.trim();
+        adjustHeight(note);
+      });
+
       taskDiv.appendChild(note);
 
       if (onChange) {
         note.addEventListener('change', () => {
-          onChange(note.value);
+          onChange(note.value.trim());
         });
       }
     } else {
@@ -444,8 +449,14 @@ export class TodoHandler {
     input.addEventListener('input', () => {
       adjustHeight(input);
     });
+
+    input.addEventListener('blur', () => {
+      input.value = input.value.trim();
+      adjustHeight(input);
+    });
+
     if (onChange) {
-      input.addEventListener('change', () => onChange(input.value));
+      input.addEventListener('change', () => onChange(input.value.trim()));
     }
     return input;
   }

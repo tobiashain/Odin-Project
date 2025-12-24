@@ -7,7 +7,7 @@
   height: 80svh;
   padding: 20px;
   box-sizing: border-box;
-  overflow-y: scroll;
+  overflow-y: auto;
 
   .todo {
     display: flex;
@@ -57,6 +57,7 @@
       .item {
         display: flex;
         justify-content: space-between;
+        margin-bottom: 10px;
       }
     }
 
@@ -141,5 +142,22 @@
 
   #selectProject {
     display: none;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  #todosContainer {
+    overflow-y: visible !important;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  #todosContainer {
+    padding: 20px 0;
+    grid-template-columns: 1fr;
+
+    .todo {
+      padding: 15px 0;
+    }
   }
 }

@@ -59,30 +59,41 @@
       </aside>
       <main>
         <div class="settings">
-          <div id="settingsTitle"></div>
+          <div class="settingsTop">
+            <div id="settingsTitle"></div>
+          </div>
+
           <div id="settingsOptions">
-            <label>Task</label>
-            <label>Date</label>
-            <label>Priority</label>
-            <label>State</label>
-            <select name="filterTask" id="filterTask">
-              <option value="All">All</option>
-              <option value="note">Note</option>
-              <option value="checklist">Checklist</option>
-            </select>
-            <input name="filterDate" id="filterDate" type="date" />
-            <select name="filterPriority" id="filterPriority">
-              <option value="All">All</option>
-              <option value="Low">Low</option>
-              <option value="Medium">Medium</option>
-              <option value="High">High</option>
-            </select>
-            <select name="filterState" id="filterState">
-              <option value="All">All</option>
-              <option value="Not Started">Not Started</option>
-              <option value="Pending">Pending</option>
-              <option value="Done">Done</option>
-            </select>
+            <div class="item">
+              <label>Task</label>
+              <select name="filterTask" id="filterTask">
+                <option value="All">All</option>
+                <option value="note">Note</option>
+                <option value="checklist">Checklist</option>
+              </select>
+            </div>
+            <div class="item">
+              <label>Date</label
+              ><input name="filterDate" id="filterDate" type="date" />
+            </div>
+            <div class="item">
+              <label>Priority</label
+              ><select name="filterPriority" id="filterPriority">
+                <option value="All">All</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+              </select>
+            </div>
+            <div class="item">
+              <label>State</label
+              ><select name="filterState" id="filterState">
+                <option value="All">All</option>
+                <option value="Not Started">Not Started</option>
+                <option value="Pending">Pending</option>
+                <option value="Done">Done</option>
+              </select>
+            </div>
           </div>
         </div>
         <div id="todosContainer">

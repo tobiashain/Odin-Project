@@ -16,7 +16,6 @@ body {
 
 .content {
   width: 100%;
-  height: 100svh;
   display: flex;
 
   input,
@@ -42,6 +41,46 @@ body {
   }
 }
 
+aside {
+  width: 20svw;
+}
+
 main {
   width: 80svw;
+}
+
+@media screen and (max-width: 1020px) {
+  aside {
+    width: 30svw;
+  }
+
+  main {
+    width: 70svw;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  .content {
+    display: block;
+  }
+
+  aside {
+    width: 100%;
+  }
+
+  main {
+    width: 100%;
+  }
+}
+
+@media (min-resolution: 2dppx) {
+  html {
+    transform: scale(2);
+    transform-origin: top left;
+  }
+
+  body {
+    width: 50%;
+    height: 50%;
+  }
 }

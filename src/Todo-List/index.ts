@@ -14,8 +14,6 @@ const domHandler = new TodoHandler();
 const subscriptions: Subscriptions[] = [];
 
 if (todoMap) {
-  console.log(projectMap);
-
   const saveDataListener: TodoMapListener = (event, map) => {
     if (
       event.type !== 'bulk' &&
@@ -30,14 +28,15 @@ if (todoMap) {
     unsubscribe: todoMap.subscribe(saveDataListener),
   });
 
-  const loggingListener: TodoMapListener = (event, map) => {
+  /*const loggingListener: TodoMapListener = (event, map) => {
     console.log(map);
     console.log(projectMap);
-  };
+  }; 
   subscriptions.push({
     listener: loggingListener,
     unsubscribe: todoMap.subscribe(loggingListener),
   });
+  */
 
   const domListener: TodoMapListener = (event, map) => {
     domHandler.handleTodoMapEvent(event);

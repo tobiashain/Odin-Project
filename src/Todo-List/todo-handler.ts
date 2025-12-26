@@ -352,7 +352,6 @@ export class TodoHandler {
         (filteredTodo) => filteredTodo.state === this.filterInput.state.value,
       );
     }
-    console.log(filteredTodo);
 
     this.handleTodoMapEvent({
       type: 'filter',

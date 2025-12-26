@@ -115,6 +115,7 @@ export class FormHandler {
         addButton.addEventListener('click', () => {
           if (itemInput.value.trim() === '') return;
           const wrapper = document.createElement('div');
+          wrapper.className = 'check-item';
 
           const itemHidden = document.createElement('input');
           itemHidden.type = 'text';
@@ -128,7 +129,7 @@ export class FormHandler {
 
           const removeBtn = document.createElement('button');
           removeBtn.type = 'button';
-          removeBtn.textContent = 'Remove';
+          removeBtn.textContent = 'X';
           removeBtn.addEventListener('click', () => wrapper.remove());
 
           wrapper.appendChild(itemHidden);

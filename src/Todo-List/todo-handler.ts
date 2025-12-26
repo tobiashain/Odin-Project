@@ -26,6 +26,7 @@ export class TodoHandler {
   private addTodoDiv: HTMLElement;
   private selectProject: HTMLElement;
   private filterInput: FilterInput;
+  private dueDate: HTMLInputElement;
 
   private nodes = new Map<string, HTMLElement>();
 
@@ -39,6 +40,7 @@ export class TodoHandler {
       priority: document.querySelector('#filterPriority') as HTMLSelectElement,
       state: document.querySelector('#filterState') as HTMLSelectElement,
     };
+    this.dueDate = getElement('#dueDate');
 
     this.bindEvents();
   }
@@ -52,6 +54,10 @@ export class TodoHandler {
 
     this.filterInput.date.addEventListener('click', () => {
       this.filterInput.date.showPicker();
+    });
+
+    this.dueDate.addEventListener('click', () => {
+      this.dueDate.showPicker();
     });
 
     for (const [key, element] of Object.entries(this.filterInput)) {

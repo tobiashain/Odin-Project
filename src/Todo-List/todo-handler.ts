@@ -3,7 +3,6 @@ import { Todo } from './todo';
 import {
   todoMap,
   projectMap,
-  switchTodoMap,
   getElement,
   adjustHeight,
   projectListHandler,
@@ -60,7 +59,7 @@ export class TodoHandler {
       this.dueDate.showPicker();
     });
 
-    for (const [key, element] of Object.entries(this.filterInput)) {
+    for (const [element] of Object.values(this.filterInput)) {
       element.addEventListener('change', () => {
         this.filterTodo();
       });

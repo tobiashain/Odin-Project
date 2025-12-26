@@ -1,6 +1,4 @@
 let number: string[] = [''];
-let operator: string;
-let operatorSelected: boolean = false;
 let outputNumber: string = '';
 const output = document.querySelector<HTMLElement>('#output');
 const operators: string[] = ['+', '-', '*', '/'];
@@ -83,7 +81,6 @@ document
       ) {
         number.push(operatorInput.value);
         number.push('');
-        operatorSelected = true;
 
         if (output) {
           outputNumber += operatorInput.value;

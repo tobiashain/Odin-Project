@@ -5,6 +5,7 @@ interface AddBookForm {
   read: boolean;
   shelf: number;
 }
+
 class Book {
   constructor(
     public id: string,
@@ -293,4 +294,4 @@ const seedBooks = [
   { title: 'Don Quixote', author: 'Miguel de Cervantes', pages: 982 },
 ];
 
-const library = new Library(seedBooks);
+new Library(seedBooks);

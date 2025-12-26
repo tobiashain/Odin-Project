@@ -1,11 +1,5 @@
 import type { Todo } from './todo';
-import {
-  type TodoMapEvent,
-  type TodoMapListener,
-  type Task,
-  State,
-  Priority,
-} from './types';
+import { type TodoMapEvent, type TodoMapListener } from './types';
 
 export class ObservableTodoMap {
   private todoMap = new Map<string, Todo>();

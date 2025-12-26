@@ -14,9 +14,9 @@ buttonsCollection.forEach((button) => {
 });
 
 function getComputerChoice() {
-	// Math.floor rounds down
-	// Math.random returns 0 >= x < 1
-	// Multiplication scales the random number to a range [0,3]
+  // Math.floor rounds down
+  // Math.random returns 0 >= x < 1
+  // Multiplication scales the random number to a range [0,3]
   const randomNumber = Math.floor(Math.random() * 3) + 1;
   const pick =
     randomNumber > 2 ? 'scissors' : randomNumber > 1 ? 'paper' : 'rock';

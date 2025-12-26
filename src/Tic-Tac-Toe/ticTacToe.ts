@@ -30,7 +30,6 @@ const gameBoard = (function () {
 
   function checkIfWon(): 'X' | 'O' | false {
     for (const [a, b, c] of wins) {
-      console.log(board[a], board[b], board[c]);
       if (board[a] && board[a] === board[b] && board[a] === board[c]) {
         return board[a];
       }
@@ -53,14 +52,11 @@ document.querySelectorAll<HTMLElement>('.cell')?.forEach((cell) => {
     const id = Number(target.id);
     const move = gameBoard.makeMove(id);
     if (!move) {
-      console.log('Invalid Move');
       return;
     }
-    console.log('Valid Move');
     target.innerText = move;
     const winner = gameBoard.checkIfWon();
     const draw = gameBoard.checkIfDraw();
-    console.log(draw);
     if (winner) {
       dialog!.innerText = `${winner} won`;
     } else if (draw.length < 1) {

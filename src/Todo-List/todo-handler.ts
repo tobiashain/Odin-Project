@@ -363,21 +363,24 @@ export class TodoHandler {
       if (
         this.filterInput.task.value === 'note' &&
         typeof todo.task !== 'string'
-      )
+      ) {
         return false;
+      }
 
       if (
         this.filterInput.task.value === 'checklist' &&
         typeof todo.task !== 'object'
-      )
+      ) {
         return false;
+      }
     }
 
     if (this.filterInput.date.value) {
       if (
         todo.dueDate.toISOString().slice(0, 10) >= this.filterInput.date.value
-      )
+      ) {
         return false;
+      }
     }
 
     if (this.filterInput.priority.value !== 'All') {

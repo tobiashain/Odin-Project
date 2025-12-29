@@ -162,8 +162,9 @@ class Library {
     bookDiv.addEventListener('click', (e: MouseEvent) => {
       const { dialog, title, author, pages, readTrue, readFalse } =
         this.showBookDialog;
-      if (!dialog || !title || !author || !pages || !readTrue || !readFalse)
+      if (!dialog || !title || !author || !pages || !readTrue || !readFalse) {
         return;
+      }
       const target = e.currentTarget as HTMLElement;
       const id = target.id;
       const rect = target.getBoundingClientRect();

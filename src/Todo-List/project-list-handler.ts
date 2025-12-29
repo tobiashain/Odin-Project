@@ -122,8 +122,9 @@ export class ProjectListHandler {
       adjustHeight(textarea);
 
       projectMap.renameProject(currentName, textarea.value);
-      if (this._settingsTitle.innerText === currentName)
+      if (this._settingsTitle.innerText === currentName) {
         this._settingsTitle.innerText = textarea.value;
+      }
       currentName = textarea.value;
     });
 

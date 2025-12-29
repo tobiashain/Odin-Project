@@ -37,8 +37,9 @@ export class ProjectStore {
 
   public deleteProject(projectId: string) {
     if (this.projectMap.delete(projectId)) {
-      if (this._currentProjectId === projectId)
+      if (this._currentProjectId === projectId) {
         this._currentProjectId = this.projectMap.keys().next().value ?? null;
+      }
       switchTodoMap(this.current);
     }
     this.saveProjects();

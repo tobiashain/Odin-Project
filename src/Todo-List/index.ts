@@ -19,8 +19,9 @@ if (todoMap) {
       event.type !== 'bulk' &&
       event.type !== 'clear' &&
       event.type !== 'filter'
-    )
+    ) {
       projectMap.saveProject(event.id);
+    }
     if (event.type === 'clear') projectMap.saveProjects();
   };
   subscriptions.push({

@@ -42,6 +42,7 @@ export default [
         'warn',
         { argsIgnorePattern: '^_' },
       ],
+      curly: ['error', 'multi-line'],
     },
     files: ['src/**/*.{ts,tsx,js,jsx}'],
   },

@@ -42,8 +42,9 @@ export class Todo {
     task?: Task | undefined;
   }) {
     if (payload.title !== undefined) this._title = payload.title;
-    if (payload.description !== undefined)
+    if (payload.description !== undefined) {
       this._description = payload.description;
+    }
     if (payload.dueDate) this._dueDate = payload.dueDate;
     if (payload.priority) this._priority = payload.priority;
     if (payload.state) this._state = payload.state;

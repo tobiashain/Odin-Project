@@ -45,6 +45,12 @@ export interface FormValues {
   task?: Task;
 }
 
+export interface FormDOMValidity {
+  title: HTMLInputElement;
+  date: HTMLInputElement;
+  taskInput: HTMLInputElement;
+}
+
 export interface StoredProject {
   projectId: string;
   todos: {

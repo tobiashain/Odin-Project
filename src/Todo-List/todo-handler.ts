@@ -59,7 +59,7 @@ export class TodoHandler {
       this.dueDate.showPicker();
     });
 
-    for (const [element] of Object.values(this.filterInput)) {
+    for (const element of Object.values(this.filterInput)) {
       element.addEventListener('change', () => {
         this.filterTodo();
       });

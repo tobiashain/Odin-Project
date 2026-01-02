@@ -2,35 +2,46 @@ import { weatherIcons } from './icons';
 import type { WeatherData, WeatherReturnData } from './types';
 
 export default class Weather {
-  constructor() {}
+  private cache: WeatherReturnData | null = null;
+  private cacheTimestamp = 0;
+  private readonly ttlMs = 10 * 60 * 1000; // 10 minutes;
 
-  public async getWeather() {
+  public async getWeather(): Promise<WeatherReturnData> {
+    const now: number = Date.now();
+
+    if (this.cache && now - this.cacheTimestamp < this.ttlMs) {
+      return this.cache;
+    }
+
     const response = await fetch('');
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
     const data: WeatherData = await response.json();
-    const icon: string = this.defineIcon(
-      data.days[0].conditions,
-      this.checkTime(
-        data.days[0].dateTimeEpoch,
-        data.days[0].sunriseEpoch,
-        data.days[0].sunsetEpoch,
-      ),
+    const day = data.days[0];
+
+    const isDay = this.checkTime(
+      day.dateTimeEpoch,
+      day.sunriseEpoch,
+      day.sunsetEpoch,
     );
 
-    const returnData: WeatherReturnData = {
+    const icon = this.defineIcon(day.conditions, isDay);
+
+    const result: WeatherReturnData = {
       address: data.address.toUpperCase(),
-      temp: data.days[0].temp,
-      description: data.days[0].description,
-      precitype: data.days[0].precitype.toUpperCase(),
+      temp: day.temp,
+      description: day.description,
+      precitype: day.precitype.toUpperCase(),
       icon,
     };
 
-    return returnData;
+    this.cache = result;
+    this.cacheTimestamp = now;
+
+    return result;
   }
 
   private defineIcon(conditions: string, isDay: boolean): string {
-    let condition: string;
     const conditionList = conditions
       .toLowerCase()
       .split(',')
@@ -45,6 +56,8 @@ export default class Weather {
     const hasThunder =
       conditionList.includes('thunder') ||
       conditionList.includes('thunderstorm');
+
+    let condition: string;
 
     if (hasThunder) {
       condition = 'thunder';
@@ -74,7 +87,7 @@ export default class Weather {
   }
 
   private getWeatherIcon(condition: string, isDay: boolean): string {
-    const iconSet = weatherIcons[condition] ?? weatherIcons.unknown;
+    const iconSet = weatherIcons[condition];
     return isDay ? iconSet!.day : iconSet!.night;
   }
 

@@ -1,6 +1,8 @@
 const path = require('path');
 const glob = require('glob');
 const fs = require('fs');
+const webpack = require('webpack');
+require('dotenv').config();
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
@@ -96,6 +98,10 @@ module.exports = (env, argv) => {
       ],
     },
     plugins: [
+      new webpack.DefinePlugin({
+        __WEATHER_API__: JSON.stringify(process.env.WEATHER_API),
+      }),
+
       new MiniCssExtractPlugin({
         filename: '[name].css', // keeps same folder structure for CSS
       }),

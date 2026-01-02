@@ -1,0 +1,1 @@
+import Weather from './getWeather';

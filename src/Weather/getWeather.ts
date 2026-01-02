@@ -5,40 +5,49 @@ export default class Weather {
   private cache: WeatherReturnData | null = null;
   private cacheTimestamp = 0;
   private readonly ttlMs = 10 * 60 * 1000; // 10 minutes;
+  private readonly url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/vienna?unitGroup=metric&include=days&key=${__WEATHER_API__}&contentType=json`;
 
-  public async getWeather(): Promise<WeatherReturnData> {
-    const now: number = Date.now();
+  public async getWeather(): Promise<WeatherReturnData | null> {
+    try {
+      const now: number = Date.now();
 
-    if (this.cache && now - this.cacheTimestamp < this.ttlMs) {
-      return this.cache;
+      if (this.cache && now - this.cacheTimestamp < this.ttlMs) {
+        return this.cache;
+      }
+
+      const response = await fetch(this.url);
+      if (!response.ok)
+        throw new Error(`HTTP error! Status: ${response.status}`);
+
+      const data: WeatherData = await response.json();
+      const day = data.days[0];
+
+      const isDay = this.checkTime(
+        day.dateTimeEpoch,
+        day.sunriseEpoch,
+        day.sunsetEpoch,
+      );
+
+      const icon = this.defineIcon(day.conditions, isDay);
+
+      const result: WeatherReturnData = {
+        address: data.address.charAt(0).toUpperCase() + data.address.slice(1),
+        temp: day.temp,
+        description: day.description,
+        preciptype: day.preciptype.map((preciptype) => {
+          return preciptype.charAt(0).toUpperCase() + preciptype.slice(1);
+        }),
+        icon,
+      };
+
+      this.cache = result;
+      this.cacheTimestamp = now;
+
+      return result;
+    } catch (error) {
+      console.error('Failed to fetch weather:', error);
+      return null;
     }
-
-    const response = await fetch('');
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
-    const data: WeatherData = await response.json();
-    const day = data.days[0];
-
-    const isDay = this.checkTime(
-      day.dateTimeEpoch,
-      day.sunriseEpoch,
-      day.sunsetEpoch,
-    );
-
-    const icon = this.defineIcon(day.conditions, isDay);
-
-    const result: WeatherReturnData = {
-      address: data.address.toUpperCase(),
-      temp: day.temp,
-      description: day.description,
-      precitype: day.precitype.toUpperCase(),
-      icon,
-    };
-
-    this.cache = result;
-    this.cacheTimestamp = now;
-
-    return result;
   }
 
   private defineIcon(conditions: string, isDay: boolean): string {
@@ -88,7 +97,8 @@ export default class Weather {
 
   private getWeatherIcon(condition: string, isDay: boolean): string {
     const iconSet = weatherIcons[condition];
-    return isDay ? iconSet!.day : iconSet!.night;
+    const path = isDay ? iconSet!.day : iconSet!.night;
+    return path.replace(/^\.\/Weather/, '.');
   }
 
   private checkTime(

@@ -8,7 +8,7 @@ export interface WeatherData {
       temp: number;
       conditions: string;
       description: string;
-      precitype: string;
+      preciptype: string[];
     },
   ];
 }
@@ -17,6 +17,6 @@ export interface WeatherReturnData {
   address: string;
   temp: number;
   description: string;
-  precitype: string;
+  preciptype: string[];
   icon: string;
 }

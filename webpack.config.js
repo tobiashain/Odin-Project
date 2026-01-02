@@ -17,6 +17,8 @@ function buildEntries() {
   const entries = {};
   entries['shared'] = path.resolve(SRC_DIR, 'shared.ts');
   files.forEach((relPath) => {
+    if (relPath.endsWith('.d.ts')) return;
+
     const full = path.resolve(SRC_DIR, relPath);
     const key = relPath
       .replace(/\\/g, '/')
@@ -78,7 +80,9 @@ module.exports = (env, argv) => {
         // Static images/icons/fonts referenced from JS/CSS
         {
           test: /\.(png|jpe?g|gif|svg|webp|ico)$/i,
+          exclude: /\.d\.ts$/,
           type: 'asset/resource',
+
           generator: {
             // Preserve original src folder structure in emitted assets
             filename: '[path][name][ext]',

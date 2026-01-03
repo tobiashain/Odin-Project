@@ -22,21 +22,20 @@ export default class Weather {
       const data: WeatherData = await response.json();
       const day = data.days[0];
 
-      const isDay = this.checkTime(
+      const isDay = Weather.checkTime(
         day.dateTimeEpoch,
         day.sunriseEpoch,
         day.sunsetEpoch,
       );
 
-      const icon = this.defineIcon(day.conditions, isDay);
+      const { icon, condition } = Weather.defineIcon(day.conditions, isDay);
 
       const result: WeatherReturnData = {
         address: data.address.charAt(0).toUpperCase() + data.address.slice(1),
         temp: day.temp,
         description: day.description,
-        preciptype: day.preciptype.map((preciptype) => {
-          return preciptype.charAt(0).toUpperCase() + preciptype.slice(1);
-        }),
+        condition,
+        isDay,
         icon,
       };
 
@@ -50,7 +49,10 @@ export default class Weather {
     }
   }
 
-  private defineIcon(conditions: string, isDay: boolean): string {
+  private static defineIcon(
+    conditions: string,
+    isDay: boolean,
+  ): { icon: string; condition: string } {
     const conditionList = conditions
       .toLowerCase()
       .split(',')
@@ -92,16 +94,18 @@ export default class Weather {
       condition = 'unknown';
     }
 
-    return this.getWeatherIcon(condition, isDay);
+    const icon = Weather.getWeatherIcon(condition, isDay);
+
+    return { icon, condition };
   }
 
-  private getWeatherIcon(condition: string, isDay: boolean): string {
+  private static getWeatherIcon(condition: string, isDay: boolean): string {
     const iconSet = weatherIcons[condition];
     const path = isDay ? iconSet!.day : iconSet!.night;
     return path.replace(/^\.\/Weather/, '.');
   }
 
-  private checkTime(
+  private static checkTime(
     dateTimeEpoch: number,
     sunriseEpoch: number,
     sunsetEpoch: number,

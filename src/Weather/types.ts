@@ -15,6 +15,9 @@ export interface WeatherData {
       humidity: number;
       windspeed: number;
       winddir: number;
+      snow: number;
+      precip: number;
+      preciptype: string[];
       pressure: number;
       conditions: string;
       description: string;
@@ -28,6 +31,9 @@ export interface WeatherData {
     humidity: number;
     windspeed: number;
     winddir: number;
+    snow: number;
+    precip: number;
+    preciptype: string[];
     pressure: number;
     conditions: string;
     sunriseEpoch: number;
@@ -43,13 +49,21 @@ export interface WeatherReturnData {
   tempMax: number;
   tempMin: number;
   humidity: number;
-  winddir: number;
+  winddir: string;
   windspeed: number;
   pressure: number;
   sunset: string;
+  density: Density;
   description: string;
   classCondition: string;
   condition: string;
   isDay: boolean;
   icon: string;
+}
+
+export interface Density {
+  snow: number;
+  rain: number;
+  windX: number;
+  windY: number;
 }

@@ -41,8 +41,8 @@ export class DOMHandler {
     this.feelslike.innerText = `Feels like ${data.feelslike} °C`;
     this.description.innerText = data.description;
     this.address.innerText = data.address;
-    this.humidity.innerText = `Humidity: ${data.humidity}`;
-    this.wind.innerText = `Wind: North, ${data.windspeed} km/h`;
+    this.humidity.innerText = `Humidity: ${data.humidity}%`;
+    this.wind.innerText = `Wind: ${data.winddir}, ${data.windspeed} km/h`;
     this.pressure.innerText = `Pressure: ${data.pressure} mbar`;
     this.solarTransit.innerText = `Sunset: ${data.sunset}`;
 
@@ -55,8 +55,8 @@ export class DOMHandler {
     //  this.createParticles(data.classCondition)
     //}
 
-    this.createParticles('snow');
-    this.animateParticles('snow');
+    this.createParticles('rain');
+    this.animateParticles('rain');
   }
 
   private createParticles(type: string) {
@@ -79,7 +79,7 @@ export class DOMHandler {
     const step = () => {
       for (let el of elements) {
         let top = parseFloat(el.style.top);
-        top += type === 'rain' ? 5 : 1; // speed
+        top += type === 'rain' ? 3 : 1; // speed
         if (top > this.weather.clientHeight) {
           top = -10;
           el.style.left = Math.random() * this.weather.clientWidth + 'px';

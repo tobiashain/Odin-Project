@@ -1,5 +1,5 @@
 import { weatherIcons } from './icons';
-import type { WeatherData, WeatherReturnData } from './types';
+import type { Density, WeatherData, WeatherReturnData } from './types';
 
 export default class Weather {
   private cache: WeatherReturnData | null = null;
@@ -34,6 +34,15 @@ export default class Weather {
         isDay,
       );
 
+      const density = Weather.calculateDensity(
+        current.precip,
+        current.snow,
+        current.windspeed,
+        current.winddir,
+      );
+
+      const winddir = Weather.degreesToCardinal(current.winddir);
+
       const result: WeatherReturnData = {
         address: data.address.charAt(0).toUpperCase() + data.address.slice(1),
         temp: current.temp,
@@ -41,10 +50,11 @@ export default class Weather {
         tempMax: day.tempmax,
         tempMin: day.tempmin,
         humidity: current.humidity,
-        winddir: current.winddir,
+        winddir,
         windspeed: current.windspeed,
         pressure: current.pressure,
         sunset: day.sunset,
+        density,
         description: day.description,
         classCondition,
         condition: current.conditions,
@@ -112,10 +122,51 @@ export default class Weather {
     return { icon, classCondition };
   }
 
+  private static calculateDensity(
+    precip: number,
+    snow: number,
+    windspeed: number,
+    winddir: number,
+  ): Density {
+    const liquidSnow = snow / 10;
+    const liquidRain = precip - liquidSnow;
+
+    const radians = ((winddir - 180) * Math.PI) / 180;
+    const windX = Math.cos(radians) * windspeed * 0.1;
+    const windY = Math.sin(radians) * windspeed * 0.1;
+
+    const density = { snow: liquidSnow, rain: liquidRain, windX, windY };
+    return density;
+  }
+
   private static getWeatherIcon(condition: string, isDay: boolean): string {
     const iconSet = weatherIcons[condition];
     const path = isDay ? iconSet!.day : iconSet!.night;
     return path.replace(/^\.\/Weather/, '.');
+  }
+
+  private static degreesToCardinal(deg: number): string {
+    const directions = [
+      'North',
+      'North Northeast',
+      'Northeast',
+      'East Northeast',
+      'East',
+      'East Southeast',
+      'Southeast',
+      'South Southeast',
+      'South',
+      'South Southwest',
+      'Southwest',
+      'West Southwest',
+      'West',
+      'West Northwest',
+      'Northwest',
+      'North Northwest',
+    ];
+
+    const index = Math.round(deg / 22.5) % 16;
+    return directions[index] ?? '';
   }
 
   private static checkTime(

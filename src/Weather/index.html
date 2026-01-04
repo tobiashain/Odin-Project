@@ -3,15 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="./style.css" rel="stylesheet" />
-    <script src="./index.js"></script>
+    <link href="./styles/style.css" rel="stylesheet" />
+    <link href="./styles/weather.css" rel="stylesheet" />
+    <script src="./index.js" defer></script>
     <title>Document</title>
   </head>
   <body>
-    <div id="weather" class="thunder night">
-      <img src="" alt="" id="icon" />
-      <div id="temperature"></div>
+    <div id="weather" class="">
+      <div class="weather-header">
+        <img src="" alt="weather-icon" id="icon" />
+        <div class="location-condition">
+          <div id="address"></div>
+          <div id="condition"></div>
+        </div>
+      </div>
+      <div class="temperature-section">
+        <div id="temp"></div>
+        <div class="temp-range">
+          <div id="max-temp"></div>
+          <div id="min-temp"></div>
+        </div>
+        <div id="feelslike"></div>
+      </div>
       <div id="description"></div>
+      <div class="additional-info">
+        <div id="humidity"></div>
+        <div id="wind"></div>
+        <div id="pressure"></div>
+        <div id="solar-transit"></div>
+      </div>
     </div>
   </body>
 </html>

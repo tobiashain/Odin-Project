@@ -5,7 +5,7 @@ export default class Weather {
   private cache: WeatherReturnData | null = null;
   private cacheTimestamp = 0;
   private readonly ttlMs = 10 * 60 * 1000; // 10 minutes;
-  private readonly url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/vienna?unitGroup=metric&include=days&key=${__WEATHER_API__}&contentType=json`;
+  private readonly url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/kitzb%C3%BChel?unitGroup=metric&include=days,current&key=${__WEATHER_API__}&contentType=json`;
 
   public async getWeather(): Promise<WeatherReturnData | null> {
     try {
@@ -21,20 +21,33 @@ export default class Weather {
 
       const data: WeatherData = await response.json();
       const day = data.days[0];
+      const current = data.currentConditions;
 
       const isDay = Weather.checkTime(
-        day.dateTimeEpoch,
+        current.datetimeEpoch,
         day.sunriseEpoch,
         day.sunsetEpoch,
       );
 
-      const { icon, condition } = Weather.defineIcon(day.conditions, isDay);
+      const { icon, classCondition } = Weather.defineIcon(
+        current.conditions,
+        isDay,
+      );
 
       const result: WeatherReturnData = {
         address: data.address.charAt(0).toUpperCase() + data.address.slice(1),
-        temp: day.temp,
+        temp: current.temp,
+        feelslike: current.feelslike,
+        tempMax: day.tempmax,
+        tempMin: day.tempmin,
+        humidity: current.humidity,
+        winddir: current.winddir,
+        windspeed: current.windspeed,
+        pressure: current.pressure,
+        sunset: day.sunset,
         description: day.description,
-        condition,
+        classCondition,
+        condition: current.conditions,
         isDay,
         icon,
       };
@@ -52,7 +65,7 @@ export default class Weather {
   private static defineIcon(
     conditions: string,
     isDay: boolean,
-  ): { icon: string; condition: string } {
+  ): { icon: string; classCondition: string } {
     const conditionList = conditions
       .toLowerCase()
       .split(',')
@@ -68,35 +81,35 @@ export default class Weather {
       conditionList.includes('thunder') ||
       conditionList.includes('thunderstorm');
 
-    let condition: string;
+    let classCondition: string;
 
     if (hasThunder) {
-      condition = 'thunder';
+      classCondition = 'thunder';
     } else if (hasSnow) {
       if (hasRain && hasPartlyCloudy) {
-        condition = 'rain-snow-sun';
+        classCondition = 'rain-snow-sun';
       } else if (hasRain) {
-        condition = 'rain-snow';
+        classCondition = 'rain-snow';
       } else if (hasPartlyCloudy) {
-        condition = 'snow-sun';
+        classCondition = 'snow-sun';
       } else {
-        condition = 'snow';
+        classCondition = 'snow';
       }
     } else if (hasRain) {
-      condition = hasPartlyCloudy ? 'rain-sun' : 'rain';
+      classCondition = hasPartlyCloudy ? 'rain-sun' : 'rain';
     } else if (hasPartlyCloudy) {
-      condition = 'partly-cloudy';
+      classCondition = 'partly-cloudy';
     } else if (hasCloud) {
-      condition = 'cloud';
+      classCondition = 'cloud';
     } else if (hasSun) {
-      condition = 'sun';
+      classCondition = 'sunny';
     } else {
-      condition = 'unknown';
+      classCondition = 'unknown';
     }
 
-    const icon = Weather.getWeatherIcon(condition, isDay);
+    const icon = Weather.getWeatherIcon(classCondition, isDay);
 
-    return { icon, condition };
+    return { icon, classCondition };
   }
 
   private static getWeatherIcon(condition: string, isDay: boolean): string {

@@ -1,5 +1,13 @@
-import Weather from './getWeather';
+import { DOMHandler } from './dom-handler';
+import Weather from './weather';
 
 const weather = new Weather();
+const domHandler = new DOMHandler();
 
-//weather.getWeather();
+weather.getWeather().then((data) => {
+  if (!data) {
+    console.log('No weather data available');
+    return;
+  }
+  domHandler.updateDOM(data);
+});

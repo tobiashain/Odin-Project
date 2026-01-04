@@ -1,0 +1,124 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.day {
+  color: #333;
+
+  #address {
+    color: #222;
+  }
+
+  #temp-range {
+    color: #111;
+  }
+
+  #description {
+    color: #222;
+  }
+
+  .additional-info {
+    color: #111;
+  }
+}
+
+.night {
+  color: #eee;
+
+  #address {
+    color: #ccc;
+  }
+
+  #temp-range {
+    color: #fff;
+  }
+
+  #description {
+    color: #ccc;
+  }
+
+  .additional-info {
+    color: #ddd;
+  }
+}
+
+.weather-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+#icon {
+  width: 70px;
+  height: 70px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  padding: 5px;
+}
+
+.location-condition {
+  #address {
+    font-size: 1.5em;
+    font-weight: 700;
+  }
+
+  #condition {
+    font-size: 1em;
+    margin-top: 2px;
+  }
+}
+
+.temperature-section {
+  margin-top: 10px;
+}
+
+#temp {
+  font-size: 2.5em;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+
+#temp-range {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  font-size: 0.95em;
+  margin-bottom: 5px;
+}
+
+#feelslike {
+  font-size: 0.9em;
+  margin-bottom: 15px;
+}
+
+#description {
+  font-size: 0.88em;
+  margin-bottom: 15px;
+  line-height: 1.3em;
+}
+
+.additional-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 15px;
+  font-size: 0.85em;
+
+  div {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    padding: 5px 10px;
+  }
+}

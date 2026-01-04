@@ -30,7 +30,7 @@ export const weatherIcons: Record<string, { day: string; night: string }> = {
   'rain-snow-sun': { day: rainSnowSunDay, night: rainSnowSunNight },
   snow: { day: snowDay, night: snowNight },
   'snow-sun': { day: snowSunDay, night: snowSunNight },
-  sun: { day: sunDay, night: sunNight },
+  sunny: { day: sunDay, night: sunNight },
   thunder: { day: thunderDay, night: thunderNight },
   unknown: { day: unknownDay, night: unknownNight },
 };

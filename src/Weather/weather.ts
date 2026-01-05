@@ -4,8 +4,9 @@ import type { Density, WeatherData, WeatherReturnData } from './types';
 export default class Weather {
   private cache: WeatherReturnData | null = null;
   private cacheTimestamp = 0;
-  private readonly ttlMs = 10 * 60 * 1000; // 10 minutes;
-  private readonly url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/kitzb%C3%BChel?unitGroup=metric&include=days,current&key=${__WEATHER_API__}&contentType=json`;
+  private readonly ttlMs = 10 * 60 * 1000; // 5 minutes;
+  private readonly region = 'kitzb%C3%BChel';
+  private readonly url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${this.region}?unitGroup=metric&include=days,current&key=${__WEATHER_API__}&contentType=json`;
 
   public async getWeather(): Promise<WeatherReturnData | null> {
     try {
@@ -18,13 +19,12 @@ export default class Weather {
       const response = await fetch(this.url);
       if (!response.ok)
         throw new Error(`HTTP error! Status: ${response.status}`);
-
       const data: WeatherData = await response.json();
       const day = data.days[0];
       const current = data.currentConditions;
 
       const isDay = Weather.checkTime(
-        current.datetimeEpoch,
+        Math.floor(Date.now() / 1000),
         day.sunriseEpoch,
         day.sunsetEpoch,
       );
@@ -43,8 +43,15 @@ export default class Weather {
 
       const winddir = Weather.degreesToCardinal(current.winddir);
 
+      let parts = day.sunset.split(':');
+      const sunsetSplit = `${parts[0]}:${parts[1]}`;
+
+      parts = day.sunrise.split(':');
+      const sunriseSplit = `${parts[0]}:${parts[1]}`;
+
       const result: WeatherReturnData = {
         address: data.address.charAt(0).toUpperCase() + data.address.slice(1),
+        tzoffset: data.tzoffset,
         temp: current.temp,
         feelslike: current.feelslike,
         tempMax: day.tempmax,
@@ -53,8 +60,10 @@ export default class Weather {
         winddir,
         windspeed: current.windspeed,
         pressure: current.pressure,
-        sunset: day.sunset,
+        sunset: sunsetSplit,
+        sunrise: sunriseSplit,
         density,
+        preciptype: current.preciptype,
         description: day.description,
         classCondition,
         condition: current.conditions,
@@ -128,14 +137,13 @@ export default class Weather {
     windspeed: number,
     winddir: number,
   ): Density {
-    const liquidSnow = snow / 10;
-    const liquidRain = precip - liquidSnow;
+    const rain = precip - snow;
 
     const radians = ((winddir - 180) * Math.PI) / 180;
     const windX = Math.cos(radians) * windspeed * 0.1;
     const windY = Math.sin(radians) * windspeed * 0.1;
 
-    const density = { snow: liquidSnow, rain: liquidRain, windX, windY };
+    const density = { snow, rain, windX, windY };
     return density;
   }
 

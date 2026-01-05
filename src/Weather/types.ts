@@ -1,5 +1,6 @@
 export interface WeatherData {
   address: string;
+  tzoffset: number;
   days: [
     {
       datetimeEpoch: number;
@@ -53,7 +54,10 @@ export interface WeatherReturnData {
   windspeed: number;
   pressure: number;
   sunset: string;
+  sunrise: string;
+  tzoffset: number;
   density: Density;
+  preciptype: string[];
   description: string;
   classCondition: string;
   condition: string;

@@ -15,6 +15,26 @@ body {
 .day {
   color: #333;
 
+  &.rain {
+    color: #eee;
+
+    #address {
+      color: #ccc;
+    }
+
+    #temp-range {
+      color: #fff;
+    }
+
+    #description {
+      color: #ddd;
+    }
+
+    .additional-info {
+      color: #ddd;
+    }
+  }
+
   #address {
     color: #222;
   }

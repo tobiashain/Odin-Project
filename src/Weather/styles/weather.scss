@@ -128,23 +128,7 @@
           rgba(255, 255, 255, 0.35) 0 2px,
           transparent 2px 8px
         ),
-        /* large snow flakes */
-          radial-gradient(circle, rgba(255, 255, 255, 0.8) 2px, transparent 3px),
-        /* small distant flakes */
-          radial-gradient(circle, rgba(255, 255, 255, 0.5) 1px, transparent 3px),
         /* cold cloudy sky */ linear-gradient(to bottom, #d7d2cc, #304352);
-
-      background-size:
-        auto,
-        110px 110px,
-        180px 180px,
-        cover;
-
-      background-position:
-        center,
-        0 0,
-        60px 90px,
-        center;
     }
 
     &.night {
@@ -155,27 +139,7 @@
           rgba(255, 255, 255, 0.2) 0 2px,
           transparent 2px 8px
         ),
-        /* large snow flakes */
-          radial-gradient(circle, rgba(255, 255, 255, 0.7) 2px, transparent 3px),
-        /* small distant flakes */
-          radial-gradient(
-            circle,
-            rgba(255, 255, 255, 0.45) 1px,
-            transparent 3px
-          ),
         /* dark overcast night */ linear-gradient(to bottom, #1e293b, #020617);
-
-      background-size:
-        auto,
-        130px 130px,
-        220px 220px,
-        cover;
-
-      background-position:
-        center,
-        0 0,
-        80px 140px,
-        center;
     }
   }
 
@@ -212,39 +176,7 @@
           rgba(255, 245, 170, 0.95) 0%,
           transparent 40%
         ),
-        /* large close flakes */
-          radial-gradient(
-            circle,
-            rgba(255, 255, 255, 0.95) 2px,
-            transparent 3px
-          ),
-        /* mid flakes */
-          radial-gradient(
-            circle,
-            rgba(255, 255, 255, 0.75) 1.5px,
-            transparent 3px
-          ),
-        /* distant flakes */
-          radial-gradient(
-            circle,
-            rgba(255, 255, 255, 0.55) 1px,
-            transparent 3px
-          ),
         /* crisp winter sky */ linear-gradient(to bottom, #c9e7ff, #fefefe);
-
-      background-size:
-        auto,
-        90px 90px,
-        140px 140px,
-        220px 220px,
-        cover;
-
-      background-position:
-        center,
-        0 0,
-        60px 80px,
-        120px 160px,
-        center;
     }
 
     &.night {
@@ -255,39 +187,7 @@
           rgba(240, 245, 255, 0.8) 0%,
           transparent 35%
         ),
-        /* large close flakes */
-          radial-gradient(
-            circle,
-            rgba(255, 255, 255, 0.85) 2px,
-            transparent 3px
-          ),
-        /* mid flakes */
-          radial-gradient(
-            circle,
-            rgba(255, 255, 255, 0.65) 1.5px,
-            transparent 3px
-          ),
-        /* distant flakes */
-          radial-gradient(
-            circle,
-            rgba(255, 255, 255, 0.45) 1px,
-            transparent 3px
-          ),
         /* cold clear night sky */ linear-gradient(to bottom, #0b132b, #020617);
-
-      background-size:
-        auto,
-        100px 100px,
-        160px 160px,
-        260px 260px,
-        cover;
-
-      background-position:
-        center,
-        0 0,
-        80px 120px,
-        140px 200px,
-        center;
     }
   }
 

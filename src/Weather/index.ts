@@ -10,4 +10,6 @@ weather.getWeather().then((data) => {
     return;
   }
   domHandler.updateDOM(data);
+  const loader = document.querySelector('#loader');
+  if (loader) loader.className = 'disabled';
 });

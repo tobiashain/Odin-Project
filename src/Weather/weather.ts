@@ -4,8 +4,8 @@ import type { Density, WeatherData, WeatherReturnData } from './types';
 export default class Weather {
   private cache: WeatherReturnData | null = null;
   private cacheTimestamp = 0;
+  private region = 'kitzb%C3%BChel';
   private readonly ttlMs = 10 * 60 * 1000; // 5 minutes;
-  private readonly region = 'kitzb%C3%BChel';
   private readonly url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${this.region}?unitGroup=metric&include=days,current&key=${__WEATHER_API__}&contentType=json`;
 
   public async getWeather(): Promise<WeatherReturnData | null> {
@@ -16,12 +16,10 @@ export default class Weather {
         return this.cache;
       }
 
-      const response = await fetch(this.url);
-      if (!response.ok)
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      const data: WeatherData = await response.json();
-      const day = data.days[0];
-      const current = data.currentConditions;
+      const { data, day, current } = await this.fetchData();
+
+      if (!day || !current)
+        throw new Error('Data error! The requested data has not been found.');
 
       const isDay = Weather.checkTime(
         Math.floor(Date.now() / 1000),
@@ -43,12 +41,6 @@ export default class Weather {
 
       const winddir = Weather.degreesToCardinal(current.winddir);
 
-      let parts = day.sunset.split(':');
-      const sunsetSplit = `${parts[0]}:${parts[1]}`;
-
-      parts = day.sunrise.split(':');
-      const sunriseSplit = `${parts[0]}:${parts[1]}`;
-
       const result: WeatherReturnData = {
         address: data.address.charAt(0).toUpperCase() + data.address.slice(1),
         tzoffset: data.tzoffset,
@@ -60,8 +52,8 @@ export default class Weather {
         winddir,
         windspeed: current.windspeed,
         pressure: current.pressure,
-        sunset: sunsetSplit,
-        sunrise: sunriseSplit,
+        sunset: Weather.formatTime(current.sunset),
+        sunrise: Weather.formatTime(current.sunrise),
         density,
         preciptype: current.preciptype,
         description: day.description,
@@ -79,6 +71,18 @@ export default class Weather {
       console.error('Failed to fetch weather:', error);
       return null;
     }
+  }
+
+  private async fetchData() {
+    const response = await fetch(this.url);
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+    const data: WeatherData = await response.json();
+
+    const day = data.days[0];
+    const current = data.currentConditions;
+
+    return { data, day, current };
   }
 
   private static defineIcon(
@@ -175,6 +179,13 @@ export default class Weather {
 
     const index = Math.round(deg / 22.5) % 16;
     return directions[index] ?? '';
+  }
+
+  private static formatTime(time: string): string {
+    const parts = time.split(':');
+    const split = `${parts[0]}:${parts[1]}`;
+
+    return split;
   }
 
   private static checkTime(

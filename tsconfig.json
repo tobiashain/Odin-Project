@@ -43,6 +43,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "include": ["src/**/*", "javascript-exercises-main"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

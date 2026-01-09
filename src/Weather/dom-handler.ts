@@ -74,10 +74,11 @@ export class DOMHandler {
   }
 
   private createParticles(density: Density) {
-    const PARTICLES = 100;
+    const RAINPARTICLES = 100;
+    const SNOWPARTICLES = 600;
 
-    const rainParticles = density.rain * PARTICLES;
-    const snowParticles = density.snow * PARTICLES;
+    const rainParticles = density.rain * RAINPARTICLES;
+    const snowParticles = density.snow * SNOWPARTICLES;
 
     const createParticle = (type: string) => {
       const el = document.createElement('div');

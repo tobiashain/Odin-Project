@@ -51,6 +51,7 @@ export default class Weather {
         humidity: current.humidity,
         winddir,
         windspeed: current.windspeed,
+        windgust: current.windgust,
         pressure: current.pressure,
         sunset: Weather.formatTime(current.sunset),
         sunrise: Weather.formatTime(current.sunrise),

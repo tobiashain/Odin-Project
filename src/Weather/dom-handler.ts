@@ -67,8 +67,18 @@ export class DOMHandler {
         data.preciptype.includes('snow')
       ) {
         this.createParticles(data.density);
-        this.animateParticles('rain-drop', data.density.windX, data.windspeed);
-        this.animateParticles('snow-flake', data.density.windX, data.windspeed);
+        this.animateParticles(
+          'rain-drop',
+          data.density.windX,
+          data.windspeed,
+          data.windgust,
+        );
+        this.animateParticles(
+          'snow-flake',
+          data.density.windX,
+          data.windspeed,
+          data.windgust,
+        );
       }
     }
   }
@@ -97,19 +107,33 @@ export class DOMHandler {
     }
   }
 
-  private animateParticles(type: string, windDir: number, windSpeed: number) {
+  private animateParticles(
+    type: string,
+    windDir: number,
+    windSpeed: number,
+    windGust: number,
+  ) {
     const elements = Array.from(this.weather.children).filter((el) =>
       el.classList.contains(type),
     ) as HTMLElement[];
+
+    let time = 0;
+
     const step = () => {
+      time += 0.01;
+
+      const gustFactor = Math.sin(time) + 1;
+
+      const effectiveWind = windSpeed + windGust * gustFactor;
+
       for (let el of elements) {
         let top = parseFloat(el.style.top);
         let left = parseFloat(el.style.left);
 
         const dirSign = windDir > 0 ? 1 : windDir < 0 ? -1 : 0;
 
-        left += windSpeed * -dirSign * 0.05;
-        top += type === 'rain' ? 3 : 1; // speed
+        left += effectiveWind * -dirSign * 0.05;
+        top += type === 'rain' ? 3 : 1;
         if (top > this.weather.clientHeight) {
           top = -10;
           left = Math.random() * this.weather.clientWidth;
@@ -124,7 +148,7 @@ export class DOMHandler {
         el.style.top = top + 'px';
         el.style.left = left + 'px';
 
-        const angle = -windSpeed * dirSign;
+        const angle = -effectiveWind * dirSign;
         el.style.transform = `rotate(${angle}deg)`;
       }
       requestAnimationFrame(step);

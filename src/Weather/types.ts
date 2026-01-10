@@ -33,6 +33,7 @@ export interface Current {
   feelslike: number;
   humidity: number;
   windspeed: number;
+  windgust: number;
   winddir: number;
   snow: number;
   precip: number;
@@ -54,6 +55,7 @@ export interface WeatherReturnData {
   humidity: number;
   winddir: string;
   windspeed: number;
+  windgust: number;
   pressure: number;
   sunset: string;
   sunrise: string;

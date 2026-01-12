@@ -2,15 +2,13 @@ import backButton from '../shared';
 import type { Subscriptions, TodoMapListener } from './types';
 import { ObservableTodoMap } from './observable-todo-map';
 import { ProjectStore } from './project-store';
-import { TodoHandler } from './todo-handler';
-import { ProjectListHandler } from './project-list-handler';
+import { handleTodoMapEvent } from './todo-handler';
+import { bindEvents as initProjectListHandler } from './project-list-handler';
 
 export const projectMap = new ProjectStore();
 export let todoMap = projectMap.current;
-export const projectListHandler = new ProjectListHandler();
 
-const domHandler = new TodoHandler();
-
+initProjectListHandler();
 const subscriptions: Subscriptions[] = [];
 
 if (todoMap) {
@@ -40,7 +38,7 @@ if (todoMap) {
   */
 
   const domListener: TodoMapListener = (event) => {
-    domHandler.handleTodoMapEvent(event);
+    handleTodoMapEvent(event);
   };
   subscriptions.push({
     listener: domListener,
@@ -57,28 +55,7 @@ export function switchTodoMap(map: ObservableTodoMap | undefined) {
         sub.unsubscribe = todoMap!.subscribe(sub.listener);
       });
     } else {
-      domHandler.handleTodoMapEvent({ type: 'clear' });
+      handleTodoMapEvent({ type: 'clear' });
     }
-  }
-}
-
-export function getElement<T extends HTMLElement = HTMLElement>(
-  selector: string,
-): T {
-  const el = document.querySelector(selector);
-  if (!el) {
-    throw new Error(`Missing required element: ${selector}`);
-  }
-  return el as T;
-}
-
-export function adjustHeight(input: HTMLTextAreaElement) {
-  input.style.height = 'auto';
-  input.style.height = input.scrollHeight + 'px';
-
-  if (input.scrollHeight > parseInt(getComputedStyle(input).maxHeight)) {
-    input.style.overflowY = 'auto';
-  } else {
-    input.style.overflowY = 'hidden';
   }
 }

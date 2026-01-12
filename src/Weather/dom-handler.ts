@@ -131,9 +131,8 @@ export class DOMHandler {
         let left = parseFloat(el.style.left);
 
         const dirSign = windDir > 0 ? 1 : windDir < 0 ? -1 : 0;
-
         left += effectiveWind * -dirSign * 0.05;
-        top += type === 'rain' ? 3 : 1;
+        top += type === 'rain-drop' ? 5 : 1;
         if (top > this.weather.clientHeight) {
           top = -10;
           left = Math.random() * this.weather.clientWidth;

@@ -32,6 +32,7 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.node,
+        __WEATHER_API__: 'readonly',
       },
     },
 

@@ -230,8 +230,9 @@ function filterTodo() {
   if (filterInput.task.value !== 'All') {
     filteredTodo = todoMap!.filter((t) => {
       if (filterInput.task.value === 'note') return typeof t.task === 'string';
-      if (filterInput.task.value === 'checklist')
+      if (filterInput.task.value === 'checklist') {
         return typeof t.task === 'object';
+      }
       return true;
     });
   }
@@ -258,27 +259,35 @@ function filterTodo() {
 
 function matchesFilter(todo: Todo): boolean {
   if (filterInput.task.value !== 'All') {
-    if (filterInput.task.value === 'note' && typeof todo.task !== 'string')
+    if (filterInput.task.value === 'note' && typeof todo.task !== 'string') {
       return false;
-    if (filterInput.task.value === 'checklist' && typeof todo.task !== 'object')
+    }
+    if (
+      filterInput.task.value === 'checklist' &&
+      typeof todo.task !== 'object'
+    ) {
       return false;
+    }
   }
 
   if (
     filterInput.date.value &&
     todo.dueDate.toISOString().slice(0, 10) >= filterInput.date.value
-  )
+  ) {
     return false;
+  }
   if (
     filterInput.priority.value !== 'All' &&
     todo.priority !== filterInput.priority.value
-  )
+  ) {
     return false;
+  }
   if (
     filterInput.state.value !== 'All' &&
     todo.state !== filterInput.state.value
-  )
+  ) {
     return false;
+  }
 
   return true;
 }

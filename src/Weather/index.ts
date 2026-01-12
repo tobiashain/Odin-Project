@@ -1,3 +1,4 @@
+import '../shared';
 import { DOMHandler } from './dom-handler';
 import Weather from './weather';
 

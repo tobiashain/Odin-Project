@@ -18,8 +18,9 @@ export default class Weather {
 
       const { data, day, current } = await this.fetchData();
 
-      if (!day || !current)
+      if (!day || !current) {
         throw new Error('Data error! The requested data has not been found.');
+      }
 
       const isDay = Weather.checkTime(
         Math.floor(Date.now() / 1000),

@@ -1,4 +1,4 @@
-import backButton from '../shared';
+import '../shared';
 import type { Subscriptions, TodoMapListener } from './types';
 import { ObservableTodoMap } from './observable-todo-map';
 import { ProjectStore } from './project-store';

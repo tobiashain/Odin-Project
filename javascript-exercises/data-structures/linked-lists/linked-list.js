@@ -1,97 +1,178 @@
-export class LinkedList {
-  headNode = null;
-  tailNode = null;
+class LinkedList {
+  headNode = undefined;
+  tailNode = undefined;
+  length = 0;
 
   append(value) {
-    if (!headNode) {
-      headNode = Node(value);
-      tailNode = Node(value);
+    if (!this.headNode) {
+      this.headNode = new Node(value);
+      this.tailNode = this.headNode;
     } else {
-      let indexNode = this.headNode;
-      while (indexNode.nextNode) {
-        indexNode = indexNode.nextNode;
-      }
-      indexNode.nextNode = Node(value);
-      this.tailNode = indexNode.nextNode;
+      this.tailNode.nextNode = new Node(value);
+      this.tailNode = this.tailNode.nextNode;
     }
+    this.length++;
   }
 
   prepend(value) {
-    if (!this.headNode) {
-      this.headNode = Node(value);
-    } else {
-      this.headNode = Node(value, this.headNode);
-    }
+    let newNode = new Node(value, this.headNode);
+    this.headNode = newNode;
+    if (!this.tailNode) this.tailNode = newNode;
+    this.length++;
   }
 
   size() {
-    if (!this.headNode) return 0;
-    let counter = 1;
-    let indexNode = this.headNode;
-    while (indexNode.nextNode) {
-      counter++;
-      indexNode = indexNode.nextNode;
-    }
-    return counter;
+    return this.length;
   }
 
   head() {
-    return this.headNode;
+    if (!this.headNode) return undefined;
+    return this.headNode.value;
   }
 
   tail() {
-    return this.tailNode;
+    if (!this.tailNode) return undefined;
+    return this.tailNode.value;
   }
 
   at(index) {
+    if (index < 0 || index > this.length - 1) throw new RangeError();
     let value = undefined;
     let temp = this.headNode;
-    for (let i = 0; i < this.size(); i++) {
+
+    for (let i = 0; i < this.length; i++) {
       if (index === i) return temp.value;
       temp = temp.nextNode;
     }
+
     return value;
   }
 
-  pop() {
+  shift() {
+    if (!this.headNode) return undefined;
+
     let popHead = this.headNode.value;
     this.headNode = this.headNode.nextNode;
+    if (!this.headNode) this.tailNode = undefined;
+    this.length--;
     return popHead;
   }
 
-  contains(value) {
-    let contains = false;
-    let temp = this.headNode;
-    do {
-      if (temp.value === value) {
-        contains = true;
-        break;
-      }
-    } while (temp.nextNode);
+  pop() {
+    if (!this.headNode) return undefined;
 
-    return contains;
+    let popTail = this.tailNode.value;
+
+    if (this.length === 1) {
+      this.headNode = undefined;
+      this.tailNode = undefined;
+    } else {
+      let temp = this.headNode;
+
+      while (temp.nextNode !== this.tailNode) {
+        temp = temp.nextNode;
+      }
+      temp.nextNode = undefined;
+      this.tailNode = temp;
+    }
+
+    this.length--;
+    return popTail;
+  }
+
+  contains(value) {
+    let temp = this.headNode;
+
+    while (temp) {
+      if (temp.value === value) {
+        return true;
+      }
+      temp = temp.nextNode;
+    }
+
+    return false;
   }
 
   findIndex(value) {
-    let index = -1;
     let counter = 0;
     let temp = this.headNode;
-    do {
+    while (temp) {
       if (temp.value === value) {
-        index = counter;
-        break;
+        return counter;
       }
+      temp = temp.nextNode;
       counter++;
-    } while (temp.nextNode);
+    }
 
-    return index;
+    return -1;
   }
 
-  toString() {}
+  toString() {
+    let string = '';
+    let temp = this.headNode;
 
-  insertAt(index, ...values) {}
+    if (!temp) return '';
 
-  removeAt(index) {}
+    while (temp) {
+      string = string + `( ${temp.value} ) -> `;
+      temp = temp.nextNode;
+    }
+
+    string = string + 'null';
+
+    return string;
+  }
+
+  insertAt(index, ...values) {
+    if (index < 0 || index > this.length - 1) throw new RangeError();
+    let counter = 0;
+    let temp = this.headNode;
+
+    while (counter <= index) {
+      if (index === counter) {
+        let right = temp.nextNode;
+        values.forEach((item, ind) => {
+          temp.nextNode = new Node(item);
+          if (index === 0 && ind === 0) {
+            this.headNode = temp.nextNode;
+          }
+          temp = temp.nextNode;
+          this.length++;
+        });
+        temp.nextNode = right;
+      }
+
+      counter++;
+    }
+  }
+
+  removeAt(index) {
+    if (index < 0 || index > this.length - 1) throw new RangeError();
+    if (index === 0) {
+      this.headNode = this.headNode.nextNode;
+      if (!this.headNode) this.tailNode = undefined;
+      this.length--;
+      return;
+    }
+
+    let counter = 1;
+    let temp = this.headNode.nextNode;
+    let previousNode = this.headNode;
+
+    while (temp) {
+      if (index === counter) {
+        previousNode.nextNode = temp.nextNode;
+        if (index === this.length - 1) {
+          this.tailNode = previousNode;
+        }
+
+        break;
+      }
+      previousNode = temp;
+      temp = temp.nextNode;
+    }
+    this.length--;
+  }
 }
 
 class Node {
@@ -100,3 +181,5 @@ class Node {
     this.nextNode = nextNode;
   }
 }
+
+module.exports = { LinkedList, Node };

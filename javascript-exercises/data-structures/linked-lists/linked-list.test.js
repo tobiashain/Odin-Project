@@ -64,25 +64,73 @@ describe('LinkedList', () => {
 
     test('returns undefined for out-of-bounds index', () => {
       list.append(1);
-      expect(list.at(5)).toBeUndefined();
-      expect(list.at(-1)).toBeUndefined();
+      expect(() => list.at(5)).toThrow(RangeError);
+      expect(() => list.at(-1)).toThrow(RangeError);
     });
   });
 
-  describe('pop', () => {
+  describe('shift', () => {
     test('removes and returns the head node value', () => {
       list.append(1);
       list.append(2);
       list.append(3);
 
-      const value = list.pop();
+      const value = list.shift();
 
       expect(value).toBe(1);
       expect(list.size()).toBe(2);
       expect(list.head()).toBe(2);
+      expect(list.tail()).toBe(3);
     });
 
-    test('returns undefined when popping from empty list', () => {
+    test('returns undefined when shifting from empty list', () => {
+      expect(list.shift()).toBeUndefined();
+    });
+
+    test('updates tail when list becomes empty', () => {
+      list.append(1);
+      list.shift();
+      expect(list.size()).toBe(0);
+      expect(list.tail()).toBeUndefined();
+    });
+
+    test('on single-element list updates tail to undefined', () => {
+      list.append(99);
+
+      const val = list.shift();
+
+      expect(val).toBe(99);
+      expect(list.size()).toBe(0);
+      expect(list.tail()).toBeUndefined();
+      expect(list.head()).toBeUndefined();
+    });
+  });
+
+  describe('pop', () => {
+    test('removes and returns the last element', () => {
+      list.append(1);
+      list.append(2);
+      list.append(3);
+
+      const popped = list.pop();
+
+      expect(popped).toBe(3);
+      expect(list.size()).toBe(2);
+      expect(list.tail()).toBe(2);
+    });
+
+    test('on single-element list empties the list', () => {
+      list.append(1);
+
+      const popped = list.pop();
+
+      expect(popped).toBe(1);
+      expect(list.size()).toBe(0);
+      expect(list.head()).toBeUndefined();
+      expect(list.tail()).toBeUndefined();
+    });
+
+    test('on empty list returns undefined', () => {
       expect(list.pop()).toBeUndefined();
     });
   });
@@ -133,7 +181,7 @@ describe('LinkedList', () => {
   });
 
   describe('insertAt', () => {
-    test.skip('inserts values at given index', () => {
+    test('inserts values at given index', () => {
       list.append(1);
       list.append(4);
 
@@ -143,21 +191,47 @@ describe('LinkedList', () => {
       expect(list.toString()).toBe('( 1 ) -> ( 2 ) -> ( 3 ) -> ( 4 ) -> null');
     });
 
-    test.skip('inserts at head', () => {
+    test('inserts at head', () => {
       list.append(2);
       list.insertAt(0, 1);
 
       expect(list.head()).toBe(1);
+      expect(list.tail()).toBe(2);
     });
 
-    test.skip('throws RangeError for out-of-bounds index', () => {
+    test('throws RangeError for out-of-bounds index', () => {
       expect(() => list.insertAt(-1, 1)).toThrow(RangeError);
       expect(() => list.insertAt(1, 1)).toThrow(RangeError);
+    });
+
+    test('multiple values at head updates head correctly', () => {
+      list.append(10);
+      list.append(20);
+
+      list.insertAt(0, 1, 2, 3);
+
+      expect(list.size()).toBe(5);
+      expect(list.head()).toBe(1);
+      expect(list.toString()).toBe(
+        '( 1 ) -> ( 2 ) -> ( 3 ) -> ( 10 ) -> ( 20 ) -> null',
+      );
+      expect(list.tail()).toBe(20);
+    });
+
+    test('multiple values at tail updates tail correctly', () => {
+      list.append(1);
+      list.append(2);
+
+      list.insertAt(list.size() - 1, 3, 4); // insert before last node
+
+      expect(list.size()).toBe(4);
+      expect(list.tail()).toBe(2);
+      expect(list.toString()).toBe('( 1 ) -> ( 3 ) -> ( 4 ) -> ( 2 ) -> null');
     });
   });
 
   describe('removeAt', () => {
-    test.skip('removes node at given index', () => {
+    test('removes node at given index', () => {
       list.append(1);
       list.append(2);
       list.append(3);
@@ -168,22 +242,53 @@ describe('LinkedList', () => {
       expect(list.toString()).toBe('( 1 ) -> ( 3 ) -> null');
     });
 
-    test.skip('removes head node', () => {
+    test('removes head node', () => {
       list.append(1);
       list.append(2);
 
       list.removeAt(0);
 
       expect(list.head()).toBe(2);
+      expect(list.tail()).toBe(2);
     });
 
-    test.skip('throws RangeError for out-of-bounds index', () => {
+    test('removes last node and updates tail', () => {
+      list.append(1);
+      list.append(2);
+      list.removeAt(1);
+      expect(list.tail()).toBe(1);
+    });
+
+    test('throws RangeError for out-of-bounds index', () => {
+      expect(() => list.removeAt(-1)).toThrow(RangeError);
       expect(() => list.removeAt(0)).toThrow(RangeError);
 
       list.append(1);
 
-      expect(() => list.removeAt(-1)).toThrow(RangeError);
       expect(() => list.removeAt(1)).toThrow(RangeError);
+    });
+
+    test('head when it is the only node updates tail to undefined', () => {
+      list.append(42);
+
+      list.removeAt(0);
+
+      expect(list.size()).toBe(0);
+      expect(list.head()).toBeUndefined();
+      expect(list.tail()).toBeUndefined();
+      expect(list.toString()).toBe('');
+    });
+
+    test('last index updates tail correctly', () => {
+      list.append(1);
+      list.append(2);
+      list.append(3);
+
+      list.removeAt(2); // remove tail
+
+      expect(list.size()).toBe(2);
+      expect(list.tail()).toBe(2);
+      expect(list.toString()).toBe('( 1 ) -> ( 2 ) -> null');
     });
   });
 });

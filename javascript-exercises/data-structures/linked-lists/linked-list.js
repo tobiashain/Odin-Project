@@ -108,42 +108,52 @@ class LinkedList {
   }
 
   toString() {
-    let string = '';
+    const parts = [];
     let temp = this.headNode;
 
     if (!temp) return '';
 
     while (temp) {
-      string = string + `( ${temp.value} ) -> `;
+      parts.push(`( ${temp.value} )`);
       temp = temp.nextNode;
     }
 
-    string = string + 'null';
-
-    return string;
+    parts.push('null');
+    return parts.join(' -> ');
   }
 
   insertAt(index, ...values) {
-    if (index < 0 || index > this.length - 1) throw new RangeError();
-    let counter = 0;
-    let temp = this.headNode;
+    if (index < 0 || index > this.length) {
+      throw new RangeError();
+    }
 
-    while (counter <= index) {
-      if (index === counter) {
-        let right = temp.nextNode;
-        values.forEach((item, ind) => {
-          temp.nextNode = new Node(item);
-          if (index === 0 && ind === 0) {
-            this.headNode = temp.nextNode;
-          }
-          temp = temp.nextNode;
-          this.length++;
-        });
-        temp.nextNode = right;
+    if (index === 0) {
+      for (let i = values.length - 1; i >= 0; i--) {
+        const node = new Node(values[i]);
+        node.nextNode = this.headNode;
+        this.headNode = node;
+        this.length++;
       }
+      return;
+    }
 
+    let temp = this.headNode;
+    let counter = 0;
+
+    while (counter < index - 1) {
+      temp = temp.nextNode;
       counter++;
     }
+
+    const right = temp.nextNode;
+
+    values.forEach((item) => {
+      temp.nextNode = new Node(item);
+      temp = temp.nextNode;
+      this.length++;
+    });
+
+    temp.nextNode = right;
   }
 
   removeAt(index) {
@@ -162,16 +172,16 @@ class LinkedList {
     while (temp) {
       if (index === counter) {
         previousNode.nextNode = temp.nextNode;
-        if (index === this.length - 1) {
+        if (temp === this.tailNode) {
           this.tailNode = previousNode;
         }
-
-        break;
+        this.length--;
+        return;
       }
       previousNode = temp;
       temp = temp.nextNode;
+      counter++;
     }
-    this.length--;
   }
 }
 

@@ -1,4 +1,4 @@
-const { LinkedList, Node } = require('./linked-list');
+const { LinkedList, Node } = require('./linkedList');
 
 describe('Node', () => {
   test('initializes with value and nextNode set to null by default', () => {

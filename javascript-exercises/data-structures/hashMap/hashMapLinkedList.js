@@ -1,4 +1,4 @@
-//Linked list updated to have a key
+//Linked list adjusted to have Hashmap variables and functions
 
 class LinkedList {
   headNode = undefined;
@@ -30,12 +30,12 @@ class LinkedList {
 
   head() {
     if (!this.headNode) return undefined;
-    return this.headNode.value;
+    return this.headNode;
   }
 
   tail() {
     if (!this.tailNode) return undefined;
-    return this.tailNode.value;
+    return this.tailNode;
   }
 
   removeByKey(key) {
@@ -77,6 +77,30 @@ class LinkedList {
       temp = temp.nextNode;
     }
     return undefined;
+  }
+
+  getAll(type) {
+    let arr = [];
+    let temp = this.headNode;
+    let extractor;
+    if (type === 'keys') {
+      extractor = (node) => node.key;
+    } else if (type === 'values') {
+      extractor = (node) => node.value;
+    } else if (type === 'entries') {
+      extractor = (node) => [node.key, node.value];
+    } else {
+      throw new Error(
+        `Invalid type "${type}". Expected 'keys', 'values', or 'entries'.`,
+      );
+    }
+
+    while (temp) {
+      arr.push(extractor(temp));
+      temp = temp.nextNode;
+    }
+
+    return arr;
   }
 
   toString() {

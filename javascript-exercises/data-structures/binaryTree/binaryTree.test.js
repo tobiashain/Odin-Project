@@ -18,12 +18,13 @@ describe('Binary Search Tree', () => {
   });
 
   describe('buildTree / Tree initialization', () => {
-    test.skip('creates a balanced tree with a root node', () => {
+    test('creates a balanced tree with a root node', () => {
+      tree.prettyPrint(tree.root);
       expect(tree.root).toBeInstanceOf(Node);
       expect(tree.isBalanced()).toBe(true);
     });
 
-    test.skip('removes duplicates and sorts values', () => {
+    test('removes duplicates and sorts values', () => {
       const values = [];
       tree.inOrderForEach((node) => values.push(node.value));
 
@@ -54,8 +55,6 @@ describe('Binary Search Tree', () => {
       tree.insert(2);
       tree.insert(1);
       tree.deleteItem(2);
-
-      tree.prettyPrint(tree.root);
 
       expect(tree.find(2)).toBeNull();
       expect(tree.find(1)).not.toBeNull();
@@ -104,31 +103,31 @@ describe('Binary Search Tree', () => {
     });
   });
 
-  describe.skip('height', () => {
-    test.skip('returns the height of a node', () => {
-      const height = tree.height(tree.root.data);
+  describe('height', () => {
+    test('returns the height of a node', () => {
+      const height = tree.height(tree.root.value);
       expect(typeof height).toBe('number');
       expect(height).toBeGreaterThanOrEqual(0);
     });
 
-    test.skip('returns null for a missing value', () => {
+    test('returns null for a missing value', () => {
       expect(tree.height(9999)).toBeNull();
     });
   });
 
-  describe.skip('depth', () => {
-    test.skip('returns the depth of a node', () => {
-      const depth = tree.depth(tree.root.data);
+  describe('depth', () => {
+    test('returns the depth of a node', () => {
+      const depth = tree.depth(tree.root.value);
       expect(depth).toBe(0);
     });
 
-    test.skip('returns null for a missing value', () => {
+    test('returns null for a missing value', () => {
       expect(tree.depth(9999)).toBeNull();
     });
   });
 
-  describe.skip('isBalanced and rebalance', () => {
-    test.skip('detects an unbalanced tree and rebalances it', () => {
+  describe('isBalanced and rebalance', () => {
+    test('detects an unbalanced tree and rebalances it', () => {
       tree.insert(1000);
       tree.insert(2000);
       tree.insert(3000);

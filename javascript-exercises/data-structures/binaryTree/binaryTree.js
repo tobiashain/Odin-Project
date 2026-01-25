@@ -99,14 +99,14 @@ class Tree {
 
     const q = new Queue();
 
-    q.enqueue(this.root);
+    q.enqueue({ node: this.root, depth: 0 });
 
     while (q.length() > 0) {
-      let node = q.dequeue();
-      callback(node);
+      let { node, depth } = q.dequeue();
+      callback(node, depth);
 
-      if (node.left) q.enqueue(node.left);
-      if (node.right) q.enqueue(node.right);
+      if (node.left) q.enqueue({ node: node.left, depth: depth + 1 });
+      if (node.right) q.enqueue({ node: node.right, depth: depth + 1 });
     }
   }
 
@@ -142,23 +142,64 @@ class Tree {
     if (!callback) throw new Error('No callback given.');
 
     const recurse = (node) => {
-      if (!node) return;
+      if (!node) return -1;
 
-      recurse(node.left);
-      recurse(node.right);
-      callback(node);
+      const leftHeight = recurse(node.left);
+      const rightHeight = recurse(node.right);
+
+      const height = Math.max(leftHeight, rightHeight) + 1;
+
+      const balanced = Math.abs(leftHeight - rightHeight) <= 1;
+
+      callback(node, height, balanced);
+
+      return height;
     };
 
     recurse(this.root);
   }
 
-  height(value) {}
+  height(value) {
+    let result = null;
 
-  depth(value) {}
+    this.postOrderForEach((node, height) => {
+      if (node.value === value) {
+        result = height;
+      }
+    });
 
-  isBalanced() {}
+    return result;
+  }
 
-  rebalance() {}
+  depth(value) {
+    let result = null;
+
+    this.levelOrderForEach((node, depth) => {
+      if (node.value === value) {
+        result = depth;
+      }
+    });
+
+    return result;
+  }
+
+  isBalanced() {
+    let treeIsBalanced = true;
+
+    this.postOrderForEach((node, depth, balanced) => {
+      if (!balanced) treeIsBalanced = false;
+    });
+
+    return treeIsBalanced;
+  }
+
+  rebalance() {
+    let sortedArr = [];
+    this.inOrderForEach((node) => {
+      sortedArr.push(node.value);
+    });
+    this.root = this.buildTree(sortedArr);
+  }
 
   prettyPrint(node, prefix = '', isLeft = true) {
     if (node === null) {
@@ -171,7 +212,7 @@ class Tree {
         false,
       );
     }
-    process.stdout.write(`${prefix}${isLeft ? '└── ' : '┌── '}${node.data}\n`);
+    process.stdout.write(`${prefix}${isLeft ? '└── ' : '┌── '}${node.value}\n`);
     if (node.left !== null) {
       this.prettyPrint(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true);
     }

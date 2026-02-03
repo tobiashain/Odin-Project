@@ -1,0 +1,43 @@
+#board {
+  display: grid;
+  aspect-ratio: 1/1;
+  max-height: 80svh;
+  grid-template: repeat(11, minmax(50px, 1fr)) / repeat(11, minmax(50px, 1fr));
+}
+
+#field {
+  grid-row-start: 2;
+  grid-row-end: 12;
+  grid-column-start: 2;
+  grid-column-end: 12;
+
+  display: grid;
+  grid-template: repeat(10, minmax(50px, 1fr)) / repeat(10, minmax(50px, 1fr));
+}
+
+#shipDragIcon {
+  position: fixed;
+  pointer-events: none;
+  display: none;
+  background-color: grey;
+}
+
+#announcer {
+  height: 50px;
+  width: 200px;
+}
+
+.outerCell,
+.innerCell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.outerCell {
+  border: 1px solid black;
+}
+
+.innerCell {
+  border: 1px dashed black;
+}

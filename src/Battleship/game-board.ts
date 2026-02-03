@@ -43,8 +43,9 @@ class GameBoard {
     length: number,
     position: { x: number; y: number },
     orientation: string,
-  ): boolean {
+  ) {
     const player = this.getCurrentPlayer();
+    const positions = [];
 
     if (length < 2 || length > 5) throw new Error('Invalid Ship length');
     if (orientation !== 'H' && orientation !== 'V')
@@ -64,6 +65,7 @@ class GameBoard {
     for (let i = 0; i < length; i++) {
       const x = orientation === 'H' ? position.x + i : position.x;
       const y = orientation === 'V' ? position.y + i : position.y;
+      positions.push({ x, y });
 
       if (player === 1) {
         this.board[x]![y]!.player1Ship = ship;
@@ -72,7 +74,7 @@ class GameBoard {
       }
     }
 
-    return true;
+    return positions;
   }
 
   public receiveAttack(position: { x: number; y: number }): boolean {

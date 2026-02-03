@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./styles.css" rel="stylesheet" />
+    <script src="./battleship.js" defer></script>
+    <title>Battleship</title>
+  </head>
+  <body>
+    <select name="ship" id="selectShip">
+      <option value="5">Carrier</option>
+      <option value="4">Battleship</option>
+      <option value="3">Cruiser</option>
+      <option value="3">Submarine</option>
+      <option value="2">Destroyer</option>
+    </select>
+    <select name="orientation" id="selectOrientation">
+      <option value="H">Horizontal</option>
+      <option value="V">Vertical</option>
+    </select>
+    <div id="announcer"></div>
+    <div id="board">
+      <div id="field"></div>
+    </div>
+    <div id="shipDragIcon"></div>
+  </body>
+</html>

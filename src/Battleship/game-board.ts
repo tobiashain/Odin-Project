@@ -77,39 +77,58 @@ class GameBoard {
     return positions;
   }
 
-  public receiveAttack(position: { x: number; y: number }): boolean {
+  public receiveAttack(position: { x: number; y: number }): {
+    hit: boolean;
+    destroyed: boolean;
+    positions: { x: number; y: number }[];
+    won: boolean;
+  } {
     const x = position.x;
     const y = position.y;
     const player = this.getCurrentPlayer();
-    let hit = false;
+    const opponent = player === 1 ? 2 : 1;
 
     if (x < 0 || x > 9 || y < 0 || y > 9)
       throw new Error('Attack is out of bounds');
 
     const cell = this.board[x]![y]!;
 
-    const attackedKey = `player${player}Attacked` as const;
+    const attackedKey = `player${opponent}Attacked` as const;
 
     if (cell[attackedKey]) throw new Error('Cell is already hit');
 
     cell[attackedKey] = true;
 
-    if (player === 1 && cell.player2Ship) {
-      cell.player2Ship.hit();
-      if (cell.player2Ship.getIsSunken()) {
-        this.playerShips.player2Ships.destroyed += 1;
-      }
+    const opponentShip = opponent === 1 ? cell.player1Ship : cell.player2Ship;
 
-      return true;
-    } else if (player === 2 && cell.player1Ship) {
-      cell.player1Ship.hit();
-      if (cell.player1Ship.getIsSunken()) {
-        this.playerShips.player1Ships.destroyed += 1;
-      }
+    if (!opponentShip)
+      return { hit: false, destroyed: false, positions: [], won: false };
 
-      return true;
+    opponentShip.hit();
+
+    const opponentShips =
+      opponent === 1
+        ? this.playerShips.player1Ships
+        : this.playerShips.player2Ships;
+
+    const destroyed = opponentShip.getIsSunken();
+    if (destroyed) {
+      opponentShips.destroyed += 1;
     }
-    return false;
+
+    const positions: { x: number; y: number }[] = [];
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        const boardCell = this.board[i]![j]!;
+        const shipInCell =
+          opponent === 1 ? boardCell.player1Ship : boardCell.player2Ship;
+        if (shipInCell === opponentShip) {
+          positions.push({ x: i, y: j });
+        }
+      }
+    }
+
+    return { hit: true, destroyed, positions, won: this.checkIfWon(player) };
   }
 
   public checkIfWon(player: 1 | 2) {

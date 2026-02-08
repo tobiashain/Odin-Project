@@ -1,4 +1,5 @@
 import '../shared';
+import Queue from './queue';
 import GameBoard from './game-board';
 
 const board = getElement('#board');
@@ -15,6 +16,10 @@ const orientation = getElement('#selectOrientation') as HTMLSelectElement;
 let shipValue: number = 5;
 let orientationValue: 'H' | 'V' = 'H';
 
+const enemyQueue = new Queue();
+const enemyVisited = new Set<string>();
+const enemyHitCells = new Set<string>();
+
 ship.selectedIndex = 0;
 orientation.selectedIndex = 0;
 
@@ -27,6 +32,16 @@ let gameWon = false;
 
 shipDragIcon.style.width = cellWidth + 'px';
 shipDragIcon.style.height = cellHeight + 'px';
+
+type AttackResult = {
+  valid: boolean;
+  hit: boolean;
+  destroyed: boolean;
+  positions: {
+    x: number;
+    y: number;
+  }[];
+};
 
 resetBtn.addEventListener('click', resetField);
 
@@ -110,7 +125,12 @@ function resetField() {
   gameStarted = false;
   gameWon = false;
 
+  enemyVisited.clear();
+
   gameBoard.clearGame();
+
+  announcer1.textContent = '';
+  announcer2.textContent = '';
 
   if (boards.children[1]) {
     boards.children[1].remove();
@@ -123,11 +143,12 @@ function clickHandler(event: Event) {
   if (cell.dataset.x && cell.dataset.y) {
     if (gameStarted) {
       let valid = false;
-      valid = attack(
+      const result = attack(
         parseInt(cell.dataset.x),
         parseInt(cell.dataset.y),
         gameBoard.getCurrentPlayer(),
       );
+      valid = result.valid;
       if (valid) {
         valid = false;
         gameBoard.changePlayer();
@@ -142,7 +163,7 @@ function clickHandler(event: Event) {
   }
 }
 
-function attack(x: number, y: number, currentPlayer: number): boolean {
+function attack(x: number, y: number, currentPlayer: number): AttackResult {
   try {
     let cell: HTMLDivElement =
       currentPlayer === 1
@@ -153,28 +174,27 @@ function attack(x: number, y: number, currentPlayer: number): boolean {
             `.innerCell[data-x="${x}"][data-y="${y}"]`,
           ) as HTMLDivElement);
 
-    if (!cell) return false;
+    if (!cell) {
+      return { valid: false, hit: false, destroyed: false, positions: [] };
+    }
 
-    const data = gameBoard.receiveAttack({
-      x: x,
-      y: y,
-    });
+    const data = gameBoard.receiveAttack({ x, y });
+
     if (data.hit) {
       cell.textContent = 'X';
 
       if (data.destroyed) {
         data.positions.forEach((pos) => {
-          if (currentPlayer === 1) {
-            const shipCell = field.querySelector(
-              `.innerCell[data-x="${pos.x}"][data-y="${pos.y}"]`,
-            ) as HTMLDivElement;
-            shipCell.style.color = 'red';
-          } else {
-            const shipCell = boards.children[1]!.querySelector(
-              `.innerCell[data-x="${pos.x}"][data-y="${pos.y}"]`,
-            ) as HTMLDivElement;
-            shipCell.style.color = 'red';
-          }
+          const shipCell =
+            currentPlayer === 1
+              ? (field.querySelector(
+                  `.innerCell[data-x="${pos.x}"][data-y="${pos.y}"]`,
+                ) as HTMLDivElement)
+              : (boards.children[1]!.querySelector(
+                  `.innerCell[data-x="${pos.x}"][data-y="${pos.y}"]`,
+                ) as HTMLDivElement);
+
+          shipCell.style.color = 'red';
         });
       }
 
@@ -197,11 +217,17 @@ function attack(x: number, y: number, currentPlayer: number): boolean {
       else announcer2.textContent = 'Player 2 missed';
     }
 
-    return true;
-  } catch (err) {
-    if (currentPlayer === 1) announcer1.textContent = 'Cell already hit';
-
-    return false;
+    return {
+      valid: true,
+      hit: data.hit,
+      destroyed: data.destroyed,
+      positions: data.positions,
+    };
+  } catch {
+    if (currentPlayer === 1) {
+      announcer1.textContent = 'Cell already hit';
+    }
+    return { valid: false, hit: false, destroyed: false, positions: [] };
   }
 }
 
@@ -262,12 +288,80 @@ function place(cell: HTMLDivElement) {
 }
 
 function attackEnemy() {
-  const valid = attack(
-    Math.floor(Math.random() * 10),
-    Math.floor(Math.random() * 10),
-    gameBoard.getCurrentPlayer(),
-  );
-  return valid;
+  let target: { x: number; y: number } | undefined;
+
+  while (enemyQueue.size > 0) {
+    const next = enemyQueue.dequeue();
+    if (!enemyVisited.has(key(next.x, next.y))) {
+      target = next;
+      break;
+    }
+  }
+
+  if (!target) {
+    target = {
+      x: Math.floor(Math.random() * 10),
+      y: Math.floor(Math.random() * 10),
+    };
+  }
+
+  const targetKey = key(target.x, target.y);
+  enemyVisited.add(targetKey);
+
+  const result = attack(target.x, target.y, gameBoard.getCurrentPlayer());
+  if (!result.valid) return false;
+
+  if (result.hit) {
+    enemyHitCells.add(targetKey);
+    enqueueNeighbors(target.x, target.y);
+
+    if (result.destroyed) {
+      const destroyedKeys = new Set(result.positions.map((p) => key(p.x, p.y)));
+
+      let hitAnotherShip = false;
+      for (const hit of enemyHitCells) {
+        if (!destroyedKeys.has(hit)) {
+          hitAnotherShip = true;
+          break;
+        }
+      }
+
+      for (const k of destroyedKeys) {
+        enemyHitCells.delete(k);
+      }
+
+      if (!hitAnotherShip) {
+        enemyQueue.clear();
+      }
+    }
+  }
+
+  return true;
+}
+
+function enqueueNeighbors(x: number, y: number) {
+  const dirs = [
+    { x: 1, y: 0 },
+    { x: -1, y: 0 },
+    { x: 0, y: 1 },
+    { x: 0, y: -1 },
+  ];
+
+  for (const d of dirs) {
+    const nx = x + d.x;
+    const ny = y + d.y;
+
+    if (nx < 0 || ny < 0 || nx >= 10 || ny >= 10) continue;
+
+    const k = key(nx, ny);
+    if (!enemyVisited.has(k)) {
+      enemyQueue.enqueue({ x: nx, y: ny });
+    }
+  }
+}
+
+function key(x: number, y: number) {
+  return `${x},${y}`;
 }
 
 function placeEnemyShips() {
@@ -314,8 +408,6 @@ function updateSize() {
   return { singleCellWidth, singleCellHeight };
 }
 
-createBoard();
-
 export function getElement<T extends HTMLElement = HTMLElement>(
   selector: string,
 ): T {
@@ -325,3 +417,5 @@ export function getElement<T extends HTMLElement = HTMLElement>(
   }
   return el as T;
 }
+
+createBoard();

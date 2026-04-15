@@ -2,20 +2,8 @@ import { weatherIcons } from './icons';
 import type { Density, WeatherData, WeatherReturnData } from './types';
 
 export default class Weather {
-  private cache: WeatherReturnData | null = null;
-  private cacheTimestamp = 0;
-  private region = 'kitzb%C3%BChel';
-  private readonly ttlMs = 10 * 60 * 1000; // 5 minutes;
-  private readonly url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${this.region}?unitGroup=metric&include=days,current&key=${__WEATHER_API__}&contentType=json`;
-
   public async getWeather(): Promise<WeatherReturnData | null> {
     try {
-      const now: number = Date.now();
-
-      if (this.cache && now - this.cacheTimestamp < this.ttlMs) {
-        return this.cache;
-      }
-
       const { data, day, current } = await this.fetchData();
 
       if (!day || !current) {
@@ -42,7 +30,7 @@ export default class Weather {
 
       const winddir = Weather.degreesToCardinal(current.winddir);
 
-      const result: WeatherReturnData = {
+      return {
         address: data.address.charAt(0).toUpperCase() + data.address.slice(1),
         tzoffset: data.tzoffset,
         temp: current.temp,
@@ -64,11 +52,6 @@ export default class Weather {
         isDay,
         icon,
       };
-
-      this.cache = result;
-      this.cacheTimestamp = now;
-
-      return result;
     } catch (error) {
       console.error('Failed to fetch weather:', error);
       return null;
@@ -76,15 +59,25 @@ export default class Weather {
   }
 
   private async fetchData() {
-    const response = await fetch(this.url);
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    const response = await fetch(
+      'https://backend-api.hain-tobias.workers.dev/api/weather',
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
 
     const data: WeatherData = await response.json();
 
-    const day = data.days[0];
-    const current = data.currentConditions;
+    if (!data.days || !Array.isArray(data.days)) {
+      throw new Error('Invalid API response: missing days');
+    }
 
-    return { data, day, current };
+    return {
+      data,
+      day: data.days[0],
+      current: data.currentConditions,
+    };
   }
 
   private static defineIcon(

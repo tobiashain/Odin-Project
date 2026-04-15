@@ -1,4 +1,3 @@
-import '../shared';
 import Queue from './queue';
 import GameBoard from './game-board';
 

@@ -3,15 +3,50 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="./home.css" ref="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link href="./home.css" rel="stylesheet" />
     <script src="./home.js" defer></script>
-    <title>Home</title>
+    <title>Odin Projects</title>
   </head>
   <body>
-    <ul>
-      <% folders.forEach(f => { %>
-      <li><a href="<%= f %>/"><%= f %></a></li>
-      <% }) %>
-    </ul>
+    <div class="noise"></div>
+
+    <header>
+      <div class="header-eyebrow">The Odin Project</div>
+      <h1>Project<br /><em>Index</em></h1>
+      <p class="header-sub">
+        A collection of exercises &amp; builds from my journey through TOP.
+      </p>
+    </header>
+
+    <main>
+      <ul class="project-grid">
+        <% folders.forEach((f, i) => { %>
+        <li class="project-card" style="--i: <%= i %>">
+          <a href="<%= f %>/">
+            <span class="card-number"
+              ><%= String(i + 1).padStart(2, '0') %></span
+            >
+            <span class="card-name"><%= f %></span>
+            <span class="card-arrow">→</span>
+          </a>
+        </li>
+        <% }) %>
+      </ul>
+    </main>
+
+    <footer>
+      <span
+        >Built while learning at
+        <a href="https://www.theodinproject.com" target="_blank" rel="noopener"
+          >theodinproject.com</a
+        ></span
+      >
+    </footer>
   </body>
 </html>

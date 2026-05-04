@@ -1,14 +1,54 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100svh;
+  margin: 0;
+  padding: 1rem;
+  background: #edf4f7;
+  color: #17242b;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+}
+
+select,
+button {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #78909c;
+  border-radius: 6px;
+  background-color: white;
+  color: inherit;
+}
+
+button {
+  background-color: #2f5f72;
+  color: white;
+  cursor: pointer;
+}
+
 #boards {
   display: flex;
   justify-content: space-around;
   gap: 1rem;
+  margin-top: 1rem;
+  overflow-x: auto;
 }
 #board2,
 #board {
   display: grid;
   aspect-ratio: 1/1;
-  max-height: 80svh;
-  grid-template: repeat(11, minmax(50px, 5svw)) / repeat(11, minmax(50px, 5svw));
+  width: min(92vw, 80svh, 620px);
+  flex: 0 0 auto;
+  padding: 0.5rem;
+  border-radius: 10px;
+  background-color: #d9e8ed;
+  box-shadow: 0 10px 24px rgba(23, 36, 43, 0.15);
+  grid-template: repeat(11, minmax(22px, 1fr)) / repeat(11, minmax(22px, 1fr));
 }
 
 #field2,
@@ -19,20 +59,23 @@
   grid-column-end: 12;
 
   display: grid;
-  grid-template: repeat(10, minmax(50px, 1fr)) / repeat(10, minmax(50px, 1fr));
+  grid-template: repeat(10, minmax(0, 1fr)) / repeat(10, minmax(0, 1fr));
 }
 
 #shipDragIcon {
   position: fixed;
   pointer-events: none;
   display: none;
-  background-color: grey;
+  background-color: rgba(47, 95, 114, 0.45);
+  border: 1px solid #2f5f72;
 }
 
 #announcer1,
 #announcer2 {
-  height: 50px;
-  width: 200px;
+  min-height: 2rem;
+  max-width: 100%;
+  margin-top: 0.5rem;
+  font-weight: 700;
 }
 
 .outerCell,
@@ -43,9 +86,31 @@
 }
 
 .outerCell {
-  border: 1px solid black;
+  color: #2f5f72;
+  font-weight: 700;
 }
 
 .innerCell {
-  border: 1px dashed black;
+  border: 1px solid #9fb7c0;
+  background-color: #f8fcfd;
+  cursor: pointer;
+  font-weight: 900;
+  color: #17242b;
+}
+
+@media screen and (max-width: 700px) {
+  body {
+    padding: 0.75rem;
+  }
+
+  #boards {
+    justify-content: flex-start;
+    flex-direction: column;
+  }
+
+  select,
+  button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
 }

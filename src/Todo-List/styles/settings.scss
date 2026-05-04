@@ -79,3 +79,23 @@
     border-top: 1px solid black;
   }
 }
+
+@media screen and (max-width: 520px) {
+  .settings {
+    height: auto;
+
+    .settingsTop {
+      height: auto;
+    }
+
+    #settingsTitle {
+      font-size: 1.5rem;
+    }
+
+    #settingsOptions {
+      height: auto;
+      grid-template: none;
+      grid-template-columns: 1fr;
+    }
+  }
+}

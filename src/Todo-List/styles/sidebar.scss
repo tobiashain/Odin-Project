@@ -95,6 +95,14 @@ aside {
 
 @media screen and (max-width: 760px) {
   aside {
+    .top {
+      height: auto;
+
+      #addProject {
+        font-size: 1rem;
+      }
+    }
+
     #projectList {
       max-height: 50svh;
       overflow: auto;

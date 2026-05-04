@@ -8,6 +8,7 @@
 * {
   padding: 0;
   margin: 0;
+  box-sizing: border-box;
 }
 
 body {
@@ -70,17 +71,5 @@ main {
 
   main {
     width: 100%;
-  }
-}
-
-@media (min-resolution: 2dppx) {
-  html {
-    transform: scale(2);
-    transform-origin: top left;
-  }
-
-  body {
-    width: 50%;
-    height: 50%;
   }
 }

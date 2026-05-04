@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
   user-select: none;
   font-family:
     system-ui,
@@ -21,21 +22,40 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
+  background-color: #f4f4f4;
 }
 
 .grid {
   display: grid;
   aspect-ratio: 1 / 1;
-  height: 70svh;
+  width: min(88vw, 70svh, 560px);
+  padding: 0.75rem;
+  border-radius: 14px;
+  background-color: #222;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
   grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr;
+  gap: 0.5rem;
 
   .cell {
-    border: 1px solid black;
+    border: 0;
+    border-radius: 8px;
+    background-color: white;
     aspect-ratio: 1 / 1;
-    font-size: 8rem;
+    font-size: clamp(3rem, 18vw, 8rem);
     display: flex;
     justify-content: center;
     align-items: center;
+    color: #222;
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      transform 0.2s;
+
+    &:hover {
+      background-color: #e8e8e8;
+      transform: translateY(-2px);
+    }
   }
 }
 
@@ -44,11 +64,15 @@ dialog {
   left: 50%;
   top: 5%;
   transform: translate(-50%);
-  width: 40%;
+  width: min(90vw, 420px);
   border: 0;
+  border-radius: 10px;
+  padding: 1rem;
   text-align: center;
-  font-size: 4rem;
-  background-color: unset;
+  font-size: clamp(2rem, 12vw, 4rem);
+  background-color: #222;
+  color: white;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 
   &:focus {
     outline: none;

@@ -55,7 +55,7 @@ dialog {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 30px;
+  gap: 15px 30px;
   margin: 0 auto;
   padding: 10px 10px;
   border: 1px solid black;
@@ -98,7 +98,7 @@ button {
 }
 
 .bookshelf {
-  height: 80svh;
+  width: min(80vw, 64svh);
   aspect-ratio: 2/2.5;
   background-color: #b15b1d;
   border-radius: 20px;
@@ -124,8 +124,8 @@ button {
     left: 0;
     width: 100%;
     height: 100%;
-    border-left: 62px solid #8f5329;
-    border-right: 62px solid #8f5329;
+    border-left: clamp(24px, 8vw, 62px) solid #8f5329;
+    border-right: clamp(24px, 8vw, 62px) solid #8f5329;
     border-radius: inherit;
     pointer-events: none;
   }
@@ -253,4 +253,20 @@ button {
   background: rgb(121, 121, 172);
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
   cursor: pointer;
+}
+
+@media screen and (max-width: 520px) {
+  .container {
+    margin-top: 30px;
+  }
+
+  #addBookForm .item {
+    width: 100%;
+  }
+
+  #addBookForm input[type='text'],
+  #addBookForm input[type='number'] {
+    box-sizing: border-box;
+    width: 100%;
+  }
 }

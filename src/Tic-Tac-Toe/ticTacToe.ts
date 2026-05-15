@@ -1,4 +1,4 @@
-const gameBoard = (function () {
+const gameBoard = (() => {
   const startBoard: undefined[] = new Array(9);
   let board: (undefined | 'X' | 'O')[] = Array.from(startBoard);
   let player1 = true;
